@@ -1,0 +1,33 @@
+2026-04-14 12:02:58.115 +07:00 [INF] Family Guardian API starting...
+2026-04-14 12:02:58.267 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-14 12:02:58.280 +07:00 [INF] Quartz Scheduler created
+2026-04-14 12:02:58.283 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-14 12:02:58.287 +07:00 [INF] RAMJobStore initialized.
+2026-04-14 12:02:58.289 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-14 12:02:58.290 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-14 12:02:58.308 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-14 12:02:58.321 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-14 12:02:58.323 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-14 12:02:58.343 +07:00 [INF] Proxy server started on port 8888
+2026-04-14 12:02:58.396 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-14 12:03:06.015 +07:00 [INF] GET /.well-known/appspecific/com.chrome.devtools.json → 404 (28ms)
+2026-04-14 12:03:18.185 +07:00 [INF] Proxy server stopped.
+2026-04-14 12:03:18.191 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-14 12:03:18.196 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-14 12:03:18.207 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-14 16:19:48.029 +07:00 [INF] Family Guardian API starting...
+2026-04-14 16:19:48.162 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-14 16:19:48.166 +07:00 [INF] Quartz Scheduler created
+2026-04-14 16:19:48.169 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-14 16:19:48.171 +07:00 [INF] RAMJobStore initialized.
+2026-04-14 16:19:48.174 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-14 16:19:48.177 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-14 16:19:48.180 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-14 16:19:48.192 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-14 16:19:48.194 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-14 16:19:48.213 +07:00 [INF] Proxy server started on port 8888
+2026-04-14 16:19:48.263 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-14 16:22:44.322 +07:00 [INF] Proxy server stopped.
+2026-04-14 16:22:44.330 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-14 16:22:44.336 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-14 16:22:44.345 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

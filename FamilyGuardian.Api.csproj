@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- JWT Authentication -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.*" />
+    <!-- EF Core + MySQL -->
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.*" />
+    <!-- Snake_case naming convention (maps PascalCase → snake_case columns/tables) -->
+    <PackageReference Include="EFCore.NamingConventions" Version="9.*" />
+    <!-- AutoMapper -->
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.*" />
+    <!-- FluentValidation -->
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.*" />
+    <!-- Serilog -->
+    <PackageReference Include="Serilog.AspNetCore" Version="9.*" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.*" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.*" />
+    <!-- Swagger -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.*" />
+    <!-- Google Auth -->
+    <PackageReference Include="Google.Apis.Auth" Version="1.*" />
+    <!-- Quartz -->
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.*" />
+    <!-- BCrypt -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.*" />
+  </ItemGroup>
+
+</Project>

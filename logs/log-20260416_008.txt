@@ -1,0 +1,74 @@
+2026-04-16 12:42:49.284 +07:00 [INF] Family Guardian API starting...
+2026-04-16 12:42:49.480 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-16 12:42:49.488 +07:00 [INF] Quartz Scheduler created
+2026-04-16 12:42:49.504 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-16 12:42:49.605 +07:00 [INF] RAMJobStore initialized.
+2026-04-16 12:42:49.609 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-16 12:42:49.656 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-16 12:42:49.661 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-16 12:42:49.683 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-16 12:42:49.692 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-16 12:42:49.713 +07:00 [INF] Proxy server started on port 8888
+2026-04-16 12:42:49.770 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-16 12:42:58.595 +07:00 [ERR] Unhandled exception: The current provider doesn't have a store type mapping for properties of type 'DBNull'.
+System.InvalidOperationException: The current provider doesn't have a store type mapping for properties of type 'DBNull'.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalTypeMappingSourceExtensions.GetMapping(IRelationalTypeMappingSource typeMappingSource, Type clrType, IModel model)
+   at Microsoft.EntityFrameworkCore.Storage.Internal.RawSqlCommandBuilder.Build(String sql, IEnumerable`1 parameters, IModel model)
+   at Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRawAsync(DatabaseFacade databaseFacade, String sql, IEnumerable`1 parameters, CancellationToken cancellationToken)
+   at FamilyGuardian.Api.Services.OnlineStatusService.UpdateStatusAsync(Int32 userId, Boolean isOnline, String ip) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Services\OnlineStatusService.cs:line 18
+   at FamilyGuardian.Api.Services.AuthService.GoogleLoginAsync(String idToken) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Services\AuthService.cs:line 78
+   at FamilyGuardian.Api.Controllers.AuthController.GoogleLogin(GoogleLoginRequest request) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Controllers\AuthController.cs:line 26
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at FamilyGuardian.Api.Middleware.RequestLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Middleware\RequestLoggingMiddleware.cs:line 17
+   at FamilyGuardian.Api.Middleware.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Middleware\ExceptionMiddleware.cs:line 23
+2026-04-16 12:43:44.376 +07:00 [INF] Proxy server stopped.
+2026-04-16 12:43:44.389 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-16 12:43:44.400 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-16 12:43:44.412 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-16 12:43:55.695 +07:00 [INF] Family Guardian API starting...
+2026-04-16 12:43:55.846 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-16 12:43:55.861 +07:00 [INF] Quartz Scheduler created
+2026-04-16 12:43:55.872 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-16 12:43:55.875 +07:00 [INF] RAMJobStore initialized.
+2026-04-16 12:43:55.880 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-16 12:43:55.882 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-16 12:43:55.884 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-16 12:43:55.898 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-16 12:43:55.900 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-16 12:43:55.921 +07:00 [INF] Proxy server started on port 8888
+2026-04-16 12:43:55.978 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-16 12:44:27.799 +07:00 [ERR] Unhandled exception: The current provider doesn't have a store type mapping for properties of type 'DBNull'.
+System.InvalidOperationException: The current provider doesn't have a store type mapping for properties of type 'DBNull'.
+   at Microsoft.EntityFrameworkCore.Storage.RelationalTypeMappingSourceExtensions.GetMapping(IRelationalTypeMappingSource typeMappingSource, Type clrType, IModel model)
+   at Microsoft.EntityFrameworkCore.Storage.Internal.RawSqlCommandBuilder.Build(String sql, IEnumerable`1 parameters, IModel model)
+   at Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRawAsync(DatabaseFacade databaseFacade, String sql, IEnumerable`1 parameters, CancellationToken cancellationToken)
+   at FamilyGuardian.Api.Services.OnlineStatusService.UpdateStatusAsync(Int32 userId, Boolean isOnline, String ip) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Services\OnlineStatusService.cs:line 18
+   at FamilyGuardian.Api.Services.AuthService.GoogleLoginAsync(String idToken) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Services\AuthService.cs:line 78
+   at FamilyGuardian.Api.Controllers.AuthController.GoogleLogin(GoogleLoginRequest request) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Controllers\AuthController.cs:line 26
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at FamilyGuardian.Api.Middleware.RequestLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Middleware\RequestLoggingMiddleware.cs:line 17
+   at FamilyGuardian.Api.Middleware.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Middleware\ExceptionMiddleware.cs:line 23
+2026-04-16 12:47:21.626 +07:00 [INF] Proxy server stopped.
+2026-04-16 12:47:21.635 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-16 12:47:21.641 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-16 12:47:21.650 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
