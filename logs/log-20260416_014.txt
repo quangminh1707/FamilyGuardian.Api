@@ -157,3 +157,48 @@
 2026-04-16 17:08:17.565 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
 2026-04-16 17:08:17.570 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
 2026-04-16 17:08:17.580 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-16 21:30:39.663 +07:00 [INF] Family Guardian API starting...
+2026-04-16 21:30:39.814 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-16 21:30:39.817 +07:00 [INF] Quartz Scheduler created
+2026-04-16 21:30:39.823 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-16 21:30:39.829 +07:00 [INF] RAMJobStore initialized.
+2026-04-16 21:30:39.837 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-16 21:30:39.842 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-16 21:30:39.850 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-16 21:30:39.866 +07:00 [INF] Adding 2 jobs, 2 triggers.
+2026-04-16 21:30:39.874 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-16 21:30:39.883 +07:00 [INF] Adding job: DEFAULT.CloseIdleSessionsJob
+2026-04-16 21:30:39.929 +07:00 [INF] Proxy HTTP listener started on port 8888
+2026-04-16 21:30:39.990 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-16 21:30:40.349 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:30:41.672 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:31:39.903 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:32:03.220 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (109ms)
+2026-04-16 21:32:03.220 +07:00 [INF] POST /api/online-status/heartbeat → 401 (109ms)
+2026-04-16 21:32:03.220 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (107ms)
+2026-04-16 21:32:03.220 +07:00 [INF] POST /api/online-status/heartbeat → 401 (105ms)
+2026-04-16 21:32:03.694 +07:00 [INF] GET /api/children → 401 (3ms)
+2026-04-16 21:32:04.955 +07:00 [INF] POST /api/auth/refresh → 200 (1300ms)
+2026-04-16 21:32:05.002 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (17ms)
+2026-04-16 21:32:05.059 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-16 21:32:05.106 +07:00 [INF] POST /api/online-status/heartbeat → 200 (122ms)
+2026-04-16 21:32:05.106 +07:00 [INF] POST /api/online-status/heartbeat → 200 (122ms)
+2026-04-16 21:32:05.192 +07:00 [INF] GET /api/children → 200 (206ms)
+2026-04-16 21:32:06.779 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-16 21:32:06.860 +07:00 [INF] GET /api/children/2/websites → 200 (80ms)
+2026-04-16 21:32:06.897 +07:00 [INF] GET /api/children/2 → 200 (118ms)
+2026-04-16 21:32:07.812 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-16 21:32:26.006 +07:00 [INF] GET /api/children/2/logs/sessions → 200 (204ms)
+2026-04-16 21:32:30.910 +07:00 [INF] GET /api/notifications → 404 (1ms)
+2026-04-16 21:32:33.143 +07:00 [INF] POST /api/online-status/heartbeat → 200 (165ms)
+2026-04-16 21:32:33.257 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-16 21:32:34.264 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-16 21:32:39.911 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:33:03.033 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-16 21:33:33.090 +07:00 [INF] POST /api/online-status/heartbeat → 200 (103ms)
+2026-04-16 21:33:33.251 +07:00 [INF] GET /api/children/2/websites → 200 (13ms)
+2026-04-16 21:33:39.898 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:34:03.034 +07:00 [INF] POST /api/online-status/heartbeat → 200 (55ms)
+2026-04-16 21:34:33.058 +07:00 [INF] POST /api/online-status/heartbeat → 200 (63ms)
+2026-04-16 21:34:33.302 +07:00 [INF] GET /api/children/2/websites → 200 (16ms)
+2026-04-16 21:34:39.899 +07:00 [INF] Executing CloseIdleSessionsJob...

@@ -1,0 +1,14 @@
+2026-04-17 10:37:08.542 +07:00 [INF] Family Guardian API starting...
+2026-04-17 10:37:08.691 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-17 10:37:08.692 +07:00 [INF] Quartz Scheduler created
+2026-04-17 10:37:08.694 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-17 10:37:08.694 +07:00 [INF] RAMJobStore initialized.
+2026-04-17 10:37:08.695 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-17 10:37:08.695 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-17 10:37:08.696 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-17 10:37:08.712 +07:00 [INF] Adding 2 jobs, 2 triggers.
+2026-04-17 10:37:08.715 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-17 10:37:08.723 +07:00 [INF] Adding job: DEFAULT.CloseIdleSessionsJob
+2026-04-17 10:37:10.152 +07:00 [INF] ✅ Root certificate initialized
+2026-04-17 10:37:14.378 +07:00 [INF] ✅ Titanium Proxy started on port 8888 (HTTP + HTTPS MITM decryption enabled)
+2026-04-17 10:37:14.472 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.

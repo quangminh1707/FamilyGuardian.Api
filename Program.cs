@@ -97,11 +97,22 @@ try
     // ─── Quartz Scheduler ────────────────────────────────────────────
     builder.Services.AddQuartz(q =>
     {
-        var jobKey = new JobKey("SendScheduledNotificationsJob");
-        q.AddJob<SendScheduledNotificationsJob>(opts => opts.WithIdentity(jobKey));
+        // Job 1: Send Scheduled Notifications
+        var notifJobKey = new JobKey("SendScheduledNotificationsJob");
+        q.AddJob<SendScheduledNotificationsJob>(opts => opts.WithIdentity(notifJobKey));
         q.AddTrigger(opts => opts
-            .ForJob(jobKey)
+            .ForJob(notifJobKey)
             .WithIdentity("SendScheduledNotificationsTrigger")
+            .WithSimpleSchedule(s => s
+                .WithIntervalInMinutes(1)
+                .RepeatForever()));
+
+        // Job 2: Close Idle Sessions (new)
+        var sessionJobKey = new JobKey("CloseIdleSessionsJob");
+        q.AddJob<CloseIdleSessionsJob>(opts => opts.WithIdentity(sessionJobKey));
+        q.AddTrigger(opts => opts
+            .ForJob(sessionJobKey)
+            .WithIdentity("CloseIdleSessionsTrigger")
             .WithSimpleSchedule(s => s
                 .WithIntervalInMinutes(1)
                 .RepeatForever()));
@@ -118,9 +129,13 @@ try
     builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
 
+    // ─── Proxy Services (new) ────────────────────────────────────────
+    builder.Services.AddScoped<IProxyAccessChecker, ProxyAccessChecker>();
+    builder.Services.AddScoped<ISessionTracker, SessionTracker>();
+
     // ─── Proxy ───────────────────────────────────────────────────────
     builder.Services.AddScoped<ProxyConnectionHandler>();
-    builder.Services.AddHostedService<ProxyServer>();
+    builder.Services.AddHostedService<FamilyProxyServer>();
 
     // ─── CORS ────────────────────────────────────────────────────────
     builder.Services.AddCors(opt =>

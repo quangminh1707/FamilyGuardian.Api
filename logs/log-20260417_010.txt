@@ -1,0 +1,91 @@
+2026-04-17 12:01:46.723 +07:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Program.cs:line 194
+2026-04-17 12:08:30.228 +07:00 [INF] Family Guardian API starting...
+2026-04-17 12:08:30.374 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-17 12:08:30.379 +07:00 [INF] Quartz Scheduler created
+2026-04-17 12:08:30.393 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-17 12:08:30.405 +07:00 [INF] RAMJobStore initialized.
+2026-04-17 12:08:30.413 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-17 12:08:30.418 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-17 12:08:30.426 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-17 12:08:30.444 +07:00 [INF] Adding 2 jobs, 2 triggers.
+2026-04-17 12:08:30.453 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-17 12:08:30.468 +07:00 [INF] Adding job: DEFAULT.CloseIdleSessionsJob
+2026-04-17 12:08:30.540 +07:00 [INF] ✅ Root certificate initialized
+2026-04-17 12:08:30.589 +07:00 [INF] ✅ Root certificate exported to C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\wwwroot\certs\FamilyGuardian-RootCA.pfx
+2026-04-17 12:08:30.648 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-17 12:08:30.738 +07:00 [INF] ✅ Titanium Proxy started on port 8888 (HTTP + HTTPS MITM decryption enabled)
+2026-04-17 12:08:30.935 +07:00 [INF] POST /api/online-status/heartbeat → 401 (145ms)
+2026-04-17 12:08:30.979 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:08:32.169 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:08:32.631 +07:00 [INF] POST /api/auth/refresh → 200 (866ms)
+2026-04-17 12:08:32.725 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (24ms)
+2026-04-17 12:08:32.782 +07:00 [INF] POST /api/online-status/heartbeat → 200 (80ms)
+2026-04-17 12:08:32.835 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-17 12:09:28.278 +07:00 [INF] POST /api/online-status/heartbeat → 200 (80ms)
+2026-04-17 12:09:30.496 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:10:28.248 +07:00 [INF] POST /api/online-status/heartbeat → 200 (58ms)
+2026-04-17 12:10:30.495 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:11:28.248 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-17 12:11:30.492 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:12:28.263 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-17 12:12:30.503 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:13:28.270 +07:00 [INF] POST /api/online-status/heartbeat → 200 (56ms)
+2026-04-17 12:13:30.495 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:14:28.248 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-17 12:14:30.498 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:15:28.309 +07:00 [INF] POST /api/online-status/heartbeat → 200 (117ms)
+2026-04-17 12:15:30.497 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:16:28.260 +07:00 [INF] POST /api/online-status/heartbeat → 200 (68ms)
+2026-04-17 12:16:30.494 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:16:31.550 +07:00 [INF] GET /api/children/2 → 200 (131ms)
+2026-04-17 12:16:31.557 +07:00 [INF] GET /api/access-logs/2 → 404 (7ms)
+2026-04-17 12:16:31.550 +07:00 [INF] GET /api/children/2/websites → 200 (95ms)
+2026-04-17 12:16:37.239 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-17 12:16:57.224 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-17 12:17:04.346 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-17 12:17:04.347 +07:00 [INF] GET /api/children/2/websites → 200 (13ms)
+2026-04-17 12:17:04.352 +07:00 [INF] GET /api/children/2 → 200 (19ms)
+2026-04-17 12:17:28.289 +07:00 [INF] POST /api/online-status/heartbeat → 200 (95ms)
+2026-04-17 12:17:30.491 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:18:28.313 +07:00 [INF] POST /api/online-status/heartbeat → 200 (120ms)
+2026-04-17 12:18:30.514 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:19:28.266 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-17 12:19:30.493 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-17 12:19:43.481 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-17 12:19:43.509 +07:00 [INF] GET /hubs/notifications → 101 (670745ms)
+2026-04-17 12:19:44.581 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-17 12:19:44.582 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-17 12:19:44.656 +07:00 [INF] GET /api/children/2 → 200 (24ms)
+2026-04-17 12:19:44.663 +07:00 [INF] POST /api/online-status/heartbeat → 200 (55ms)
+2026-04-17 12:19:44.663 +07:00 [INF] POST /api/online-status/heartbeat → 200 (55ms)
+2026-04-17 12:19:44.702 +07:00 [INF] GET /api/children/2/websites → 200 (10ms)
+2026-04-17 12:19:44.720 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-17 12:19:45.462 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-17 12:20:15.237 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-17 12:20:16.579 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-17 12:20:16.582 +07:00 [INF] GET /hubs/notifications → 101 (31124ms)
+2026-04-17 12:20:16.596 +07:00 [INF] Stopping proxy server...
+2026-04-17 12:20:16.601 +07:00 [INF] Proxy server stopped
+2026-04-17 12:20:16.606 +07:00 [ERR] BackgroundService failed
+System.Exception: Proxy is not running.
+   at Titanium.Web.Proxy.ProxyServer.Stop()
+   at FamilyGuardian.Api.Proxy.FamilyProxyServer.ExecuteAsync(CancellationToken stoppingToken) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Proxy\ProxyServer.cs:line 95
+   at FamilyGuardian.Api.Proxy.FamilyProxyServer.ExecuteAsync(CancellationToken stoppingToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2026-04-17 12:20:16.736 +07:00 [FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.Exception: Proxy is not running.
+   at Titanium.Web.Proxy.ProxyServer.Stop()
+   at FamilyGuardian.Api.Proxy.FamilyProxyServer.ExecuteAsync(CancellationToken stoppingToken) in C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\Proxy\ProxyServer.cs:line 95
+   at FamilyGuardian.Api.Proxy.FamilyProxyServer.ExecuteAsync(CancellationToken stoppingToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2026-04-17 12:20:16.747 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-17 12:20:16.750 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-17 12:20:16.782 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

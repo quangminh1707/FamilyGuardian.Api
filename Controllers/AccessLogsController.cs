@@ -1,3 +1,4 @@
+using FamilyGuardian.Api.Models.DTOs.Logs;
 using FamilyGuardian.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,42 @@ public class AccessLogsController : ControllerBase
         {
             var history = await _logService.GetUsageHistoryAsync(childId, guardianId, start, end);
             return Ok(history);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
+    [HttpGet("sessions")]
+    public async Task<IActionResult> GetSessions(int childId,
+        [FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        try
+        {
+            var (items, totalCount) = await _logService.GetSessionsAsync(childId, guardianId, fromDate, toDate, page, pageSize);
+            return Ok(new { items, totalCount, page, pageSize });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary(int childId, [FromQuery] int days = 7)
+    {
+        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        try
+        {
+            var summary = await _logService.GetUsageSummaryAsync(childId, guardianId, days);
+            return Ok(summary);
         }
         catch (UnauthorizedAccessException ex)
         {

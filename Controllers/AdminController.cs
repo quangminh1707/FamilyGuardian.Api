@@ -147,4 +147,25 @@ public class AdminController : ControllerBase
 
         return Ok(setting);
     }
+
+    [HttpGet("proxy-root-cert")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DownloadRootCert()
+    {
+        try
+        {
+            // Cert được export bởi FamilyProxyServer khi khởi động
+            var certPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "certs", "FamilyGuardian-RootCA.pfx");
+
+            if (!System.IO.File.Exists(certPath))
+                return NotFound(new { message = "Root certificate không tìm thấy. Vui lòng khởi động proxy trước." });
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(certPath);
+            return File(bytes, "application/x-pkcs12", "FamilyGuardian-RootCA.pfx");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Lỗi tải certificate: {ex.Message}" });
+        }
+    }
 }

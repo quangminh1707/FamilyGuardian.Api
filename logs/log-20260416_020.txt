@@ -1,0 +1,31 @@
+2026-04-16 21:57:00.701 +07:00 [INF] Family Guardian API starting...
+2026-04-16 21:57:00.855 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-16 21:57:00.861 +07:00 [INF] Quartz Scheduler created
+2026-04-16 21:57:00.862 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-16 21:57:00.863 +07:00 [INF] RAMJobStore initialized.
+2026-04-16 21:57:00.864 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-16 21:57:00.865 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-16 21:57:00.866 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-16 21:57:00.884 +07:00 [INF] Adding 2 jobs, 2 triggers.
+2026-04-16 21:57:00.885 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-16 21:57:00.895 +07:00 [INF] Adding job: DEFAULT.CloseIdleSessionsJob
+2026-04-16 21:57:00.932 +07:00 [INF] Proxy HTTP listener started on port 8889
+2026-04-16 21:57:00.982 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-16 21:57:01.278 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 21:57:02.665 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 22:01:20.113 +07:00 [INF] Family Guardian API starting...
+2026-04-16 22:01:20.238 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-16 22:01:20.240 +07:00 [INF] Quartz Scheduler created
+2026-04-16 22:01:20.241 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-16 22:01:20.242 +07:00 [INF] RAMJobStore initialized.
+2026-04-16 22:01:20.242 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-16 22:01:20.242 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-16 22:01:20.243 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-16 22:01:20.258 +07:00 [INF] Adding 2 jobs, 2 triggers.
+2026-04-16 22:01:20.261 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-16 22:01:20.267 +07:00 [INF] Adding job: DEFAULT.CloseIdleSessionsJob
+2026-04-16 22:01:20.293 +07:00 [INF] Proxy HTTP listener started on port 8889
+2026-04-16 22:01:20.332 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-16 22:01:20.588 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 22:01:21.641 +07:00 [INF] Executing CloseIdleSessionsJob...
+2026-04-16 22:02:20.286 +07:00 [INF] Executing CloseIdleSessionsJob...

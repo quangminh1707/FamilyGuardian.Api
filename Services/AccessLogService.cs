@@ -106,4 +106,84 @@ public class AccessLogService : IAccessLogService
                 }).ToList()
             }).ToList();
     }
+
+    public async Task<(List<SessionDto> Items, int TotalCount)> GetSessionsAsync(int childId, int guardianId, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
+    {
+        // Verify access
+        var hasAccess = await _db.GuardianChildRelationships
+            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
+        if (!hasAccess) throw new UnauthorizedAccessException("Bạn không có quyền xem thông tin này.");
+
+        var from = (fromDate ?? DateTime.Today.AddDays(-7)).Date;
+        var to = (toDate ?? DateTime.Today).Date;
+
+        var sessions = await _db.WebSessions
+            .Include(s => s.Website)
+            .Where(s => s.ChildId == childId
+                     && s.StartedAt.Date >= from
+                     && s.StartedAt.Date <= to)
+            .OrderByDescending(s => s.StartedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => new SessionDto
+            {
+                Id = s.Id,
+                Domain = s.Domain,
+                DisplayName = s.Website.DisplayName,
+                FaviconUrl = s.Website.FaviconUrl,
+                StartedAt = s.StartedAt,
+                EndedAt = s.EndedAt,
+                DurationSeconds = s.DurationSeconds,
+                IsActive = s.EndedAt == null,
+            })
+            .ToListAsync();
+
+        var total = await _db.WebSessions
+            .CountAsync(s => s.ChildId == childId
+                          && s.StartedAt.Date >= from
+                          && s.StartedAt.Date <= to);
+
+        return (sessions, total);
+    }
+
+    public async Task<object> GetUsageSummaryAsync(int childId, int guardianId, int days)
+    {
+        // Verify access
+        var hasAccess = await _db.GuardianChildRelationships
+            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
+        if (!hasAccess) throw new UnauthorizedAccessException("Bạn không có quyền xem thông tin này.");
+
+        var fromDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-days + 1));
+
+        // Tổng theo domain
+        var byDomain = await _db.DailyUsageStats
+            .Include(d => d.Website)
+            .Where(d => d.ChildId == childId && d.UsageDate >= fromDate)
+            .GroupBy(d => new { d.Domain, d.Website.DisplayName, d.Website.FaviconUrl, d.Website.TimeLimitMinutes })
+            .Select(g => new
+            {
+                domain = g.Key.Domain,
+                displayName = g.Key.DisplayName,
+                faviconUrl = g.Key.FaviconUrl,
+                timeLimitMinutes = g.Key.TimeLimitMinutes,
+                totalSeconds = g.Sum(x => x.TotalSeconds),
+                totalRequests = g.Sum(x => x.RequestCount),
+            })
+            .OrderByDescending(x => x.totalSeconds)
+            .ToListAsync();
+
+        // Breakdown theo ngày
+        var byDay = await _db.DailyUsageStats
+            .Where(d => d.ChildId == childId && d.UsageDate >= fromDate)
+            .GroupBy(d => d.UsageDate)
+            .Select(g => new
+            {
+                date = g.Key,
+                totalSeconds = g.Sum(x => x.TotalSeconds),
+            })
+            .OrderBy(x => x.date)
+            .ToListAsync();
+
+        return new { byDomain, byDay, days };
+    }
 }

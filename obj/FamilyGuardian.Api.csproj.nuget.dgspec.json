@@ -95,6 +95,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[7.*, )"
+            },
+            "Titanium.Web.Proxy": {
+              "target": "Package",
+              "version": "[3.2.0, )"
             }
           },
           "imports": [

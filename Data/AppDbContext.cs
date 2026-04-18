@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
     public DbSet<ProxyIpMapping> ProxyIpMappings => Set<ProxyIpMapping>();
+    public DbSet<WebSession> WebSessions => Set<WebSession>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────
     public DbSet<ChildSpResult> ChildSpResults => Set<ChildSpResult>();
@@ -108,6 +109,18 @@ public class AppDbContext : DbContext
         mb.Entity<Notification>()
             .HasOne(n => n.Child).WithMany(u => u.ReceivedNotifications)
             .HasForeignKey(n => n.ChildId).OnDelete(DeleteBehavior.Cascade);
+
+        // WebSession
+        mb.Entity<WebSession>()
+            .HasOne(s => s.Child).WithMany()
+            .HasForeignKey(s => s.ChildId).OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<WebSession>()
+            .HasOne(s => s.Website).WithMany()
+            .HasForeignKey(s => s.AllowedWebsiteId).OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<WebSession>()
+            .HasIndex(s => new { s.ChildId, s.StartedAt });
+        mb.Entity<WebSession>()
+            .HasIndex(s => new { s.EndedAt, s.LastActivityAt }); // cho CloseIdleSessionsJob
 
         // ── Keyless SP result types ─────────────────────────────────────────
         mb.Entity<ChildSpResult>().HasNoKey();

@@ -162,3 +162,9 @@ C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian
 C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\obj\Debug\net9.0\FamilyGuardian.Api.genruntimeconfig.cache
 C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\obj\Debug\net9.0\ref\FamilyGuardian.Api.dll
 C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\EFCore.NamingConventions.dll
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\obj\Debug\net9.0\FamilyGuardian.Api.sourcelink.json
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\BrotliSharpLib.dll
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\BouncyCastle.Crypto.dll
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\System.Text.Json.dll
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\Titanium.Web.Proxy.dll
+C:\Users\DUONG CHI\Downloads\Hệ thống kiểm soát truy cập\FamilyGuardian.Api\bin\Debug\net9.0\FamilyGuardian.Api.staticwebassets.runtime.json

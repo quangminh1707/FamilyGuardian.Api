@@ -92,36 +92,42 @@ public class ChildService : IChildService
         }
     }
 
-    public async Task AddIpMappingAsync(int childId, int guardianId, AddIpMappingRequest request)
+   public async Task AddIpMappingAsync(int childId, int guardianId, AddIpMappingRequest request)
+{
+    var hasAccess = await _db.GuardianChildRelationships
+        .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
+    
+    if (!hasAccess)
+        throw new UnauthorizedAccessException("Bạn không có quyền quản lý trẻ này.");
+
+    // Lấy thông tin child (GoogleId + Email)
+    var child = await _db.Users.FindAsync(childId);
+
+    // Upsert logic
+    var mapping = await _db.ProxyIpMappings.FirstOrDefaultAsync(m => m.IpAddress == request.IpAddress);
+    if (mapping != null)
     {
-        var hasAccess = await _db.GuardianChildRelationships
-            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
-        
-        if (!hasAccess)
-            throw new UnauthorizedAccessException("Bạn không có quyền quản lý trẻ này.");
-
-        // Upsert logic (SQL UNIQUE KEY uq_ip handles single IP globally, 
-        // but typically one IP belongs to one child)
-        var mapping = await _db.ProxyIpMappings.FirstOrDefaultAsync(m => m.IpAddress == request.IpAddress);
-        if (mapping != null)
-        {
-            mapping.ChildId = childId;
-            mapping.DeviceName = request.DeviceName;
-            mapping.CreatedBy = guardianId;
-        }
-        else
-        {
-            _db.ProxyIpMappings.Add(new ProxyIpMapping
-            {
-                ChildId = childId,
-                IpAddress = request.IpAddress,
-                DeviceName = request.DeviceName,
-                CreatedBy = guardianId
-            });
-        }
-
-        await _db.SaveChangesAsync();
+        mapping.ChildId = childId;
+        mapping.DeviceName = request.DeviceName;
+        mapping.GoogleId = child?.GoogleId;          // ← Thêm
+        mapping.GoogleEmail = child?.Email;          // ← Thêm
+        mapping.CreatedBy = guardianId;
     }
+    else
+    {
+        _db.ProxyIpMappings.Add(new ProxyIpMapping
+        {
+            ChildId = childId,
+            IpAddress = request.IpAddress,
+            DeviceName = request.DeviceName,
+            GoogleId = child?.GoogleId,               // ← Thêm
+            GoogleEmail = child?.Email,               // ← Thêm
+            CreatedBy = guardianId
+        });
+    }
+
+    await _db.SaveChangesAsync();
+}
 
     public async Task<List<ProxyIpMappingDto>> GetIpMappingsAsync(int childId, int guardianId)
     {
