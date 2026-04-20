@@ -2,6 +2,7 @@ using FamilyGuardian.Api.Data;
 using FamilyGuardian.Api.Helpers;
 using FamilyGuardian.Api.Models;
 using FamilyGuardian.Api.Models.Entities;
+using FamilyGuardian.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FamilyGuardian.Api.Services;
@@ -25,29 +26,6 @@ public class ExtensionConfigResponse
     public int ChildId { get; set; }
     public string? FullName { get; set; }
     public string? Email { get; set; }
-}
-
-public interface IExtensionService
-{
-    /// <summary>
-    /// Check if a domain is allowed for the child (via google_id)
-    /// </summary>
-    Task<ExtensionCheckResponse> CheckAccessAsync(string googleId, string domain);
-
-    /// <summary>
-    /// Get extension config for popup
-    /// </summary>
-    Task<ExtensionConfigResponse?> GetConfigAsync(string googleId);
-
-    /// <summary>
-    /// Update heartbeat - track time spent on website
-    /// </summary>
-    Task UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId);
-
-    /// <summary>
-    /// Toggle filter status
-    /// </summary>
-    Task<bool> ToggleFilterAsync(int childId, bool enabled, int requestingGuardianId);
 }
 
 public class ExtensionService : IExtensionService
@@ -149,58 +127,68 @@ public class ExtensionService : IExtensionService
         }
     }
 
-    public async Task UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId)
+  public async Task<bool> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId)
+{
+    try
     {
-        try
+        domain = DomainNormalizer.Normalize(domain);
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+
+        if (user == null) return false;
+        if (!allowedWebsiteId.HasValue) return false;
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var dailyStat = await _context.DailyUsageStats
+            .FirstOrDefaultAsync(d =>
+                d.ChildId == user.Id
+                && d.AllowedWebsiteId == allowedWebsiteId.Value
+                && d.UsageDate == today);
+
+        if (dailyStat == null)
         {
-            domain = DomainNormalizer.Normalize(domain);
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
-
-            if (user == null) return;
-            
-            // Only track if we have a valid website ID
-            if (!allowedWebsiteId.HasValue) return;
-
-            // Get or create daily usage record
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var dailyStat = await _context.DailyUsageStats
-                .FirstOrDefaultAsync(d => 
-                    d.ChildId == user.Id 
-                    && d.AllowedWebsiteId == allowedWebsiteId.Value
-                    && d.UsageDate == today
-                );
-
-            if (dailyStat == null)
+            dailyStat = new DailyUsageStat
             {
-                dailyStat = new DailyUsageStat
-                {
-                    ChildId = user.Id,
-                    AllowedWebsiteId = allowedWebsiteId.Value,
-                    Domain = domain,
-                    UsageDate = today,
-                    TotalSeconds = 30,
-                    RequestCount = 1,
-                    LastUpdated = DateTime.UtcNow
-                };
-                _context.DailyUsageStats.Add(dailyStat);
-            }
-            else
-            {
-                dailyStat.TotalSeconds += 30;
-                dailyStat.RequestCount += 1;
-                dailyStat.LastUpdated = DateTime.UtcNow;
-            }
-
-            await _context.SaveChangesAsync();
-            _logger.LogDebug("Heartbeat recorded for child {ChildId}, domain {Domain}", user.Id, domain);
+                ChildId = user.Id,
+                AllowedWebsiteId = allowedWebsiteId.Value,
+                Domain = domain,
+                UsageDate = today,
+                TotalSeconds = 30,
+                RequestCount = 1,
+                LastUpdated = DateTime.UtcNow
+            };
+            _context.DailyUsageStats.Add(dailyStat);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Error updating heartbeat");
+            dailyStat.TotalSeconds += 30;
+            dailyStat.RequestCount += 1;
+            dailyStat.LastUpdated = DateTime.UtcNow;
         }
+
+        await _context.SaveChangesAsync();
+
+        // ✅ Kiểm tra có vượt giới hạn không
+        var website = await _context.AllowedWebsites
+            .FirstOrDefaultAsync(w => w.Id == allowedWebsiteId.Value);
+
+        if (website?.TimeLimitMinutes != null)
+        {
+            bool exceeded = dailyStat.TotalSeconds >= (website.TimeLimitMinutes * 60);
+            _logger.LogDebug("Heartbeat: child={ChildId}, domain={Domain}, seconds={Seconds}, limit={Limit}, exceeded={Exceeded}",
+                user.Id, domain, dailyStat.TotalSeconds, website.TimeLimitMinutes * 60, exceeded);
+            return exceeded;
+        }
+
+        return false;
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error updating heartbeat");
+        return false;
+    }
+}
 
     public async Task<bool> ToggleFilterAsync(int childId, bool enabled, int requestingGuardianId)
     {
@@ -259,4 +247,6 @@ public class ExtensionService : IExtensionService
             _logger.LogError(ex, "Error logging access for domain {Domain}", domain);
         }
     }
+
+    
 }

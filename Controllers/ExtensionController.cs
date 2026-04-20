@@ -2,6 +2,7 @@ using FamilyGuardian.Api.Models;
 using FamilyGuardian.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FamilyGuardian.Api.Services.Interfaces;
 using System.Security.Claims;
 
 namespace FamilyGuardian.Api.Controllers;
@@ -129,10 +130,14 @@ public class ExtensionController : ControllerBase
         }
 
         // Update heartbeat
-        await _extensionService.UpdateHeartbeatAsync(googleId, request.Domain, request.AllowedWebsiteId);
+       bool limitExceeded = await _extensionService.UpdateHeartbeatAsync(
+    googleId, request.Domain, request.AllowedWebsiteId);
+
+return Ok(new { success = true, limitExceeded });
         
-        return Ok(new { success = true });
     }
+
+    
 
     /// <summary>
     /// PATCH /api/children/{childId}/filter

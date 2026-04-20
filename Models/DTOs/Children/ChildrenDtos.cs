@@ -8,6 +8,7 @@ public class ChildDto
     public string? AvatarUrl { get; set; }
     public bool IsOnline { get; set; }
     public DateTime? LastSeenAt { get; set; }
+    public bool FilterEnabled { get; set; }  
     public int ActiveWebsitesCount { get; set; }
     public int TodayTotalSeconds { get; set; }
 }
@@ -21,6 +22,7 @@ public class ChildDetailDto
     public bool IsOnline { get; set; }
     public DateTime? LastSeenAt { get; set; }
     public string? IpAddress { get; set; }
+    public bool FilterEnabled { get; set; }  
     public List<AllowedWebsiteDto> AllowedWebsites { get; set; } = [];
     public List<ProxyIpMappingDto> ProxyIpMappings { get; set; } = [];
     public int TodayTotalSeconds { get; set; }

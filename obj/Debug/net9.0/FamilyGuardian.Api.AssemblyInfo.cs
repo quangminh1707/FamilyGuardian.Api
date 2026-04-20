@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FamilyGuardian.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1ad2a179a3ade1c07a24dfc695a2713882d57c6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ac107a5495ddf5e01609585e6a46e02e1ca6024a")]
 [assembly: System.Reflection.AssemblyProductAttribute("FamilyGuardian.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FamilyGuardian.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
