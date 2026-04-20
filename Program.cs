@@ -3,7 +3,6 @@ using FamilyGuardian.Api.Data;
 using FamilyGuardian.Api.Hubs;
 using FamilyGuardian.Api.Jobs;
 using FamilyGuardian.Api.Middleware;
-using FamilyGuardian.Api.Proxy;
 using FamilyGuardian.Api.Services;
 using FamilyGuardian.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -73,7 +72,7 @@ try
     // ─── AutoMapper ─────────────────────────────────────────────────
     builder.Services.AddAutoMapper(typeof(Program));
 
-    // ─── HttpClient (website check + proxy forward) ─────────────────
+    // ─── HttpClient (website check + google token) ──────────────────
     builder.Services.AddHttpClient("WebCheck", c =>
     {
         c.Timeout = TimeSpan.FromSeconds(builder.Configuration.GetValue("WebsiteCheck:TimeoutSeconds", 5));
@@ -85,10 +84,10 @@ try
         ServerCertificateCustomValidationCallback = (_, _, _, _) => true
     });
 
-    builder.Services.AddHttpClient("ProxyForward", c =>
+    builder.Services.AddHttpClient<IGoogleTokenService, GoogleTokenService>(c =>
     {
-        c.Timeout = TimeSpan.FromSeconds(30);
-        c.DefaultRequestHeaders.Add("User-Agent", "FamilyGuardian-Proxy/1.0");
+        c.Timeout = TimeSpan.FromSeconds(10);
+        c.DefaultRequestHeaders.Add("User-Agent", "FamilyGuardian/1.0");
     });
 
     // ─── SignalR ─────────────────────────────────────────────────────
@@ -106,16 +105,6 @@ try
             .WithSimpleSchedule(s => s
                 .WithIntervalInMinutes(1)
                 .RepeatForever()));
-
-        // Job 2: Close Idle Sessions (new)
-        var sessionJobKey = new JobKey("CloseIdleSessionsJob");
-        q.AddJob<CloseIdleSessionsJob>(opts => opts.WithIdentity(sessionJobKey));
-        q.AddTrigger(opts => opts
-            .ForJob(sessionJobKey)
-            .WithIdentity("CloseIdleSessionsTrigger")
-            .WithSimpleSchedule(s => s
-                .WithIntervalInMinutes(1)
-                .RepeatForever()));
     });
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
@@ -129,13 +118,8 @@ try
     builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
 
-    // ─── Proxy Services (new) ────────────────────────────────────────
-    builder.Services.AddScoped<IProxyAccessChecker, ProxyAccessChecker>();
-    builder.Services.AddScoped<ISessionTracker, SessionTracker>();
-
-    // ─── Proxy ───────────────────────────────────────────────────────
-    builder.Services.AddScoped<ProxyConnectionHandler>();
-    builder.Services.AddHostedService<FamilyProxyServer>();
+    // ─── Extension Services ───────────────────────────────────────────
+    builder.Services.AddScoped<IExtensionService, ExtensionService>();
 
     // ─── CORS ────────────────────────────────────────────────────────
     builder.Services.AddCors(opt =>
@@ -146,6 +130,13 @@ try
                     "http://localhost:3000",
                     "http://localhost:5174",
                     "http://localhost:5175")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials());
+        
+        // Allow Chrome Extension (chrome-extension://XXX)
+        opt.AddPolicy("AllowExtension", policy =>
+            policy.SetIsOriginAllowed(origin => origin.StartsWith("chrome-extension://"))
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials());
@@ -166,7 +157,7 @@ try
         {
             Title = "Family Guardian API",
             Version = "v2.0",
-            Description = "Parental control system API with Proxy and Stats"
+            Description = "Parental control system API with Chrome Extension support"
         });
 
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

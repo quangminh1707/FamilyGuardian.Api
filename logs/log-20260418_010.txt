@@ -1,0 +1,66 @@
+2026-04-18 12:34:21.970 +07:00 [INF] Family Guardian API starting...
+2026-04-18 12:34:22.129 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-18 12:34:22.140 +07:00 [INF] Quartz Scheduler created
+2026-04-18 12:34:22.145 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-18 12:34:22.151 +07:00 [INF] RAMJobStore initialized.
+2026-04-18 12:34:22.156 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-18 12:34:22.159 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-18 12:34:22.165 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-18 12:34:22.178 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-18 12:34:22.182 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-18 12:34:22.285 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-18 12:34:24.146 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (117ms)
+2026-04-18 12:34:24.237 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:34:24.971 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: 
+
+FamilyGuardian.Api.Controllers.ChildrenController.ToggleFilter (FamilyGuardian.Api)
+FamilyGuardian.Api.Controllers.ExtensionController.ToggleFilter (FamilyGuardian.Api)
+   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span`1 candidateState)
+   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span`1 candidateState)
+   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span`1 candidateState)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-04-18 12:34:39.183 +07:00 [INF] POST /api/online-status/heartbeat → 200 (140ms)
+2026-04-18 12:34:40.245 +07:00 [INF] GET /api/children/2/websites → 200 (158ms)
+2026-04-18 12:35:09.104 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-18 12:35:39.133 +07:00 [INF] POST /api/online-status/heartbeat → 200 (72ms)
+2026-04-18 12:35:40.286 +07:00 [INF] GET /api/children/2/websites → 200 (17ms)
+2026-04-18 12:36:09.249 +07:00 [INF] POST /api/online-status/heartbeat → 200 (56ms)
+2026-04-18 12:36:39.261 +07:00 [INF] POST /api/online-status/heartbeat → 200 (79ms)
+2026-04-18 12:36:42.218 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-18 12:36:42.218 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-18 12:36:42.245 +07:00 [INF] GET /hubs/notifications → 101 (138090ms)
+2026-04-18 12:36:42.231 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:37:12.221 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-18 12:37:12.239 +07:00 [INF] GET /hubs/notifications → 101 (30017ms)
+2026-04-18 12:37:12.250 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-18 12:37:12.260 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-18 12:37:12.267 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-18 12:37:14.202 +07:00 [INF] Family Guardian API starting...
+2026-04-18 12:37:14.358 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-18 12:37:14.372 +07:00 [INF] Quartz Scheduler created
+2026-04-18 12:37:14.381 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-18 12:37:14.389 +07:00 [INF] RAMJobStore initialized.
+2026-04-18 12:37:14.393 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-18 12:37:14.400 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-18 12:37:14.405 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-18 12:37:14.424 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-18 12:37:14.430 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-18 12:37:14.503 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-18 12:37:14.793 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (118ms)
+2026-04-18 12:37:16.066 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:37:21.179 +07:00 [INF] PATCH /api/children/2/filter → 204 (301ms)
+2026-04-18 12:37:39.149 +07:00 [INF] POST /api/online-status/heartbeat → 200 (96ms)
+2026-04-18 12:37:40.455 +07:00 [INF] GET /api/children/2/websites → 200 (121ms)
+2026-04-18 12:37:44.260 +07:00 [INF] PATCH /api/children/2/filter → 204 (16ms)
+2026-04-18 12:37:45.114 +07:00 [INF] PATCH /api/children/2/filter → 204 (14ms)
+2026-04-18 12:38:09.264 +07:00 [INF] POST /api/online-status/heartbeat → 200 (76ms)
+2026-04-18 12:38:22.250 +07:00 [INF] PATCH /api/children/2/filter → 204 (13ms)
+2026-04-18 12:38:22.856 +07:00 [INF] PATCH /api/children/2/filter → 204 (20ms)
+2026-04-18 12:38:39.247 +07:00 [INF] POST /api/online-status/heartbeat → 200 (64ms)
+2026-04-18 12:39:00.080 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (3ms)
+2026-04-18 12:39:00.088 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:39:00.102 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-18 12:39:00.137 +07:00 [INF] GET /hubs/notifications → 101 (104167ms)

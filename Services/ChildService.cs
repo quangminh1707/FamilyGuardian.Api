@@ -1,6 +1,5 @@
 using FamilyGuardian.Api.Data;
 using FamilyGuardian.Api.Models.DTOs.Children;
-using FamilyGuardian.Api.Models.Entities;
 using FamilyGuardian.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +44,7 @@ public class ChildService : IChildService
         if (!hasAccess)
             throw new UnauthorizedAccessException("Bạn không có quyền quản lý trẻ này.");
 
+        // Lấy thông tin child
         var child = await _db.Users
             .Include(u => u.OnlineStatus)
             .FirstOrDefaultAsync(u => u.Id == childId);
@@ -54,16 +54,6 @@ public class ChildService : IChildService
 
         // Lấy danh sách web được phép
         var websites = await _websiteService.GetChildAllowedWebsitesAsync(childId, guardianId);
-        
-        // Lấy IP mappings
-        var ipMappings = await _db.ProxyIpMappings
-            .Where(m => m.ChildId == childId)
-            .Select(m => new ProxyIpMappingDto
-            {
-                Id = m.Id,
-                IpAddress = m.IpAddress,
-                DeviceName = m.DeviceName
-            }).ToListAsync();
 
         return new ChildDetailDto
         {
@@ -75,7 +65,6 @@ public class ChildService : IChildService
             LastSeenAt = child.OnlineStatus?.LastSeenAt,
             IpAddress = child.OnlineStatus?.IpAddress,
             AllowedWebsites = websites,
-            ProxyIpMappings = ipMappings,
             TodayTotalSeconds = websites.Sum(w => w.TodaySeconds)
         };
     }
@@ -91,69 +80,18 @@ public class ChildService : IChildService
             await _db.SaveChangesAsync();
         }
     }
-
-   public async Task AddIpMappingAsync(int childId, int guardianId, AddIpMappingRequest request)
+    public async Task ToggleFilterAsync(int childId, int guardianId, bool filterEnabled)
 {
+    // Kiểm tra quyền
     var hasAccess = await _db.GuardianChildRelationships
         .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
-    
-    if (!hasAccess)
-        throw new UnauthorizedAccessException("Bạn không có quyền quản lý trẻ này.");
 
-    // Lấy thông tin child (GoogleId + Email)
-    var child = await _db.Users.FindAsync(childId);
+    if (!hasAccess) throw new UnauthorizedAccessException("Không có quyền quản lý con này");
 
-    // Upsert logic
-    var mapping = await _db.ProxyIpMappings.FirstOrDefaultAsync(m => m.IpAddress == request.IpAddress);
-    if (mapping != null)
-    {
-        mapping.ChildId = childId;
-        mapping.DeviceName = request.DeviceName;
-        mapping.GoogleId = child?.GoogleId;          // ← Thêm
-        mapping.GoogleEmail = child?.Email;          // ← Thêm
-        mapping.CreatedBy = guardianId;
-    }
-    else
-    {
-        _db.ProxyIpMappings.Add(new ProxyIpMapping
-        {
-            ChildId = childId,
-            IpAddress = request.IpAddress,
-            DeviceName = request.DeviceName,
-            GoogleId = child?.GoogleId,               // ← Thêm
-            GoogleEmail = child?.Email,               // ← Thêm
-            CreatedBy = guardianId
-        });
-    }
+    var child = await _db.Users.FindAsync(childId)
+        ?? throw new KeyNotFoundException();
 
+    child.FilterEnabled = filterEnabled;
     await _db.SaveChangesAsync();
 }
-
-    public async Task<List<ProxyIpMappingDto>> GetIpMappingsAsync(int childId, int guardianId)
-    {
-        var hasAccess = await _db.GuardianChildRelationships
-            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
-        
-        if (!hasAccess)
-            throw new UnauthorizedAccessException("Bạn không có quyền quản lý trẻ này.");
-
-        return await _db.ProxyIpMappings
-            .Where(m => m.ChildId == childId)
-            .Select(m => new ProxyIpMappingDto
-            {
-                Id = m.Id,
-                IpAddress = m.IpAddress,
-                DeviceName = m.DeviceName
-            }).ToListAsync();
-    }
-
-    public async Task RemoveIpMappingAsync(int childId, int guardianId, int mappingId)
-    {
-        var mapping = await _db.ProxyIpMappings.FindAsync(mappingId);
-        if (mapping != null && mapping.ChildId == childId)
-        {
-            _db.ProxyIpMappings.Remove(mapping);
-            await _db.SaveChangesAsync();
-        }
-    }
 }

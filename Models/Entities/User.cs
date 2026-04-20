@@ -9,6 +9,7 @@ public class User
     public string? AvatarUrl { get; set; }       // từ Google payload.Picture
     public UserRole Role { get; set; } = UserRole.Guardian;
     public bool IsActive { get; set; } = true;
+    public bool FilterEnabled { get; set; } = false;  // NEW: Web filter toggle for child accounts
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 

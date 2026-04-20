@@ -18,7 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<WebsiteCheckCache> WebsiteCheckCaches => Set<WebsiteCheckCache>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
-    public DbSet<ProxyIpMapping> ProxyIpMappings => Set<ProxyIpMapping>();
+ 
     public DbSet<WebSession> WebSessions => Set<WebSession>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────

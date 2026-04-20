@@ -53,41 +53,24 @@ public class ChildrenController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{childId}/ip-mappings")]
-    public async Task<IActionResult> AddIpMapping(int childId, [FromBody] AddIpMappingRequest request)
+    [HttpPatch("{childId}/filter")]
+    public async Task<IActionResult> ToggleFilter(int childId, [FromBody] FilterToggleRequest request)
     {
         var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
-            await _childService.AddIpMappingAsync(childId, guardianId, request);
-            return Ok();
+            await _childService.ToggleFilterAsync(childId, guardianId, request.FilterEnabled);
+            return Ok(new { success = true, filterEnabled = request.FilterEnabled });
         }
         catch (UnauthorizedAccessException ex)
         {
             return Forbid(ex.Message);
         }
-    }
-
-    [HttpGet("{childId}/ip-mappings")]
-    public async Task<IActionResult> GetIpMappings(int childId)
-    {
-        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        try
+        catch (KeyNotFoundException)
         {
-            var mappings = await _childService.GetIpMappingsAsync(childId, guardianId);
-            return Ok(mappings);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Forbid(ex.Message);
+            return NotFound();
         }
     }
 
-    [HttpDelete("{childId}/ip-mappings/{mappingId}")]
-    public async Task<IActionResult> RemoveIpMapping(int childId, int mappingId)
-    {
-        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        await _childService.RemoveIpMappingAsync(childId, guardianId, mappingId);
-        return NoContent();
-    }
+  
 }

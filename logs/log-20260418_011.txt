@@ -1,0 +1,26 @@
+2026-04-18 12:37:14.202 +07:00 [INF] Family Guardian API starting...
+2026-04-18 12:37:14.358 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-18 12:37:14.372 +07:00 [INF] Quartz Scheduler created
+2026-04-18 12:37:14.381 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-18 12:37:14.389 +07:00 [INF] RAMJobStore initialized.
+2026-04-18 12:37:14.393 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-18 12:37:14.400 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-18 12:37:14.405 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-18 12:37:14.424 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-18 12:37:14.430 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-18 12:37:14.503 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-18 12:37:14.793 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (118ms)
+2026-04-18 12:37:16.066 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:37:21.179 +07:00 [INF] PATCH /api/children/2/filter → 204 (301ms)
+2026-04-18 12:37:39.149 +07:00 [INF] POST /api/online-status/heartbeat → 200 (96ms)
+2026-04-18 12:37:40.455 +07:00 [INF] GET /api/children/2/websites → 200 (121ms)
+2026-04-18 12:37:44.260 +07:00 [INF] PATCH /api/children/2/filter → 204 (16ms)
+2026-04-18 12:37:45.114 +07:00 [INF] PATCH /api/children/2/filter → 204 (14ms)
+2026-04-18 12:38:09.264 +07:00 [INF] POST /api/online-status/heartbeat → 200 (76ms)
+2026-04-18 12:38:22.250 +07:00 [INF] PATCH /api/children/2/filter → 204 (13ms)
+2026-04-18 12:38:22.856 +07:00 [INF] PATCH /api/children/2/filter → 204 (20ms)
+2026-04-18 12:38:39.247 +07:00 [INF] POST /api/online-status/heartbeat → 200 (64ms)
+2026-04-18 12:39:00.080 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (3ms)
+2026-04-18 12:39:00.088 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-18 12:39:00.102 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-18 12:39:00.137 +07:00 [INF] GET /hubs/notifications → 101 (104167ms)
