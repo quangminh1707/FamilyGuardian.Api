@@ -17,6 +17,13 @@ public class NotificationsController : ControllerBase
     {
         _notificationService = notificationService;
     }
+    [HttpGet]
+public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+{
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var history = await _notificationService.GetNotificationHistoryAsync(userId, page, pageSize);
+    return Ok(history);
+}
 
     [HttpGet("unread")]
     public async Task<IActionResult> GetUnread()

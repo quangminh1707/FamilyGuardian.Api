@@ -44,3 +44,17 @@
 2026-04-20 13:10:48.541 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
 2026-04-20 13:10:48.545 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
 2026-04-20 13:10:48.551 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-20 16:30:04.170 +07:00 [INF] Family Guardian API starting...
+2026-04-20 16:30:04.338 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-20 16:30:04.341 +07:00 [INF] Quartz Scheduler created
+2026-04-20 16:30:04.345 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-20 16:30:04.348 +07:00 [INF] RAMJobStore initialized.
+2026-04-20 16:30:04.352 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-20 16:30:04.359 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-20 16:30:04.361 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-20 16:30:04.377 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-20 16:30:04.382 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-20 16:30:06.375 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-20 16:30:10.001 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-20 16:30:10.014 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-20 16:30:10.041 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

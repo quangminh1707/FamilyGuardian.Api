@@ -24,7 +24,9 @@ public class NotificationService : INotificationService
     public async Task<List<NotificationDto>> GetUnreadNotificationsAsync(int userId)
     {
         return await _db.Notifications
-            .Where(n => n.ChildId == userId && !n.IsRead && (n.ScheduledAt == null || n.ScheduledAt <= DateTime.UtcNow))
+            .Where(n => n.GuardianId == userId  // ✅ Guardian xem thông báo của mình
+                && !n.IsRead
+                && (n.ScheduledAt == null || n.ScheduledAt <= DateTime.UtcNow))
             .OrderByDescending(n => n.CreatedAt)
             .Select(n => new NotificationDto
             {
@@ -42,7 +44,7 @@ public class NotificationService : INotificationService
     public async Task<List<NotificationDto>> GetNotificationHistoryAsync(int userId, int page, int pageSize)
     {
         return await _db.Notifications
-            .Where(n => n.ChildId == userId)
+            .Where(n => n.GuardianId == userId)  // ✅ Guardian xem lịch sử thông báo của mình
             .OrderByDescending(n => n.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -79,8 +81,8 @@ public class NotificationService : INotificationService
             notification.SentAt = DateTime.UtcNow;
             _db.Notifications.Add(notification);
             await _db.SaveChangesAsync();
-            
-            // Send real-time
+
+            // Gửi realtime tới con
             await _hubContext.Clients.Group($"user_{childId}").SendAsync("ReceiveNotification", new NotificationDto
             {
                 Id = notification.Id,
@@ -100,8 +102,8 @@ public class NotificationService : INotificationService
     public async Task MarkAsReadAsync(int userId, int notificationId)
     {
         var notification = await _db.Notifications
-            .FirstOrDefaultAsync(n => n.Id == notificationId && n.ChildId == userId);
-        
+            .FirstOrDefaultAsync(n => n.Id == notificationId && n.GuardianId == userId); // ✅
+
         if (notification != null)
         {
             notification.IsRead = true;
@@ -112,7 +114,7 @@ public class NotificationService : INotificationService
     public async Task MarkAllAsReadAsync(int userId)
     {
         var unread = await _db.Notifications
-            .Where(n => n.ChildId == userId && !n.IsRead)
+            .Where(n => n.GuardianId == userId && !n.IsRead) // ✅
             .ToListAsync();
 
         foreach (var n in unread) n.IsRead = true;

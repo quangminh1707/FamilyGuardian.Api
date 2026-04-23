@@ -1,0 +1,35 @@
+2026-04-23 11:08:46.733 +07:00 [INF] Family Guardian API starting...
+2026-04-23 11:08:47.808 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-23 11:08:47.903 +07:00 [INF] Quartz Scheduler created
+2026-04-23 11:08:48.605 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-23 11:08:48.769 +07:00 [INF] RAMJobStore initialized.
+2026-04-23 11:08:49.438 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-23 11:08:50.642 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-23 11:08:52.260 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-23 11:08:52.736 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-23 11:08:52.789 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-23 11:08:56.337 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-23 11:09:15.275 +07:00 [INF] POST /api/online-status/heartbeat → 401 (94ms)
+2026-04-23 11:09:15.275 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (90ms)
+2026-04-23 11:09:15.275 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (89ms)
+2026-04-23 11:09:15.275 +07:00 [INF] POST /api/online-status/heartbeat → 401 (94ms)
+2026-04-23 11:09:15.309 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (7ms)
+2026-04-23 11:09:15.308 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (2ms)
+2026-04-23 11:09:15.715 +07:00 [INF] GET /api/children → 401 (4ms)
+2026-04-23 11:09:16.592 +07:00 [INF] POST /api/auth/refresh → 200 (889ms)
+2026-04-23 11:09:16.660 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (20ms)
+2026-04-23 11:09:16.663 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (26ms)
+2026-04-23 11:09:16.832 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-23 11:09:16.834 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-23 11:09:16.856 +07:00 [INF] Guardian 1 joined notification group
+2026-04-23 11:09:16.902 +07:00 [INF] GET /api/children → 200 (259ms)
+2026-04-23 11:09:16.985 +07:00 [INF] POST /api/online-status/heartbeat → 200 (348ms)
+2026-04-23 11:09:16.985 +07:00 [INF] POST /api/online-status/heartbeat → 200 (351ms)
+2026-04-23 11:09:22.647 +07:00 [INF] GET /api/access-logs/2 → 404 (1ms)
+2026-04-23 11:09:22.739 +07:00 [INF] GET /api/children/2/websites → 200 (89ms)
+2026-04-23 11:09:22.770 +07:00 [INF] GET /api/children/2 → 200 (121ms)
+2026-04-23 11:09:23.702 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-23 11:09:45.093 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-23 11:10:15.256 +07:00 [INF] POST /api/online-status/heartbeat → 200 (75ms)
+2026-04-23 11:10:45.268 +07:00 [INF] POST /api/online-status/heartbeat → 200 (77ms)
+2026-04-23 11:11:15.287 +07:00 [INF] POST /api/online-status/heartbeat → 200 (94ms)

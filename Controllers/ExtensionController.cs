@@ -137,12 +137,29 @@ return Ok(new { success = true, limitExceeded });
         
     }
 
+
+
     
 
-    /// <summary>
-    /// PATCH /api/children/{childId}/filter
-    /// Guardian toggles filter status for a child
-    /// </summary>
+   /// <summary>
+/// POST /api/extension/ping
+/// Extension pings every 10 seconds to signal it's alive
+/// </summary>
+[HttpPost("ping")]
+[AllowAnonymous]
+public async Task<ActionResult> Ping()
+{
+    var authHeader = Request.Headers.Authorization.ToString();
+    if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+        return Unauthorized();
+
+    var token = authHeader.Substring("Bearer ".Length);
+    var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+    if (!success) return Unauthorized();
+
+    await _extensionService.UpdateExtensionPingAsync(googleId);
+    return Ok(new { success = true });
+}
    
 }
 

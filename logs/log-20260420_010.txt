@@ -1,0 +1,201 @@
+2026-04-20 17:16:03.288 +07:00 [INF] Family Guardian API starting...
+2026-04-20 17:16:03.573 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-20 17:16:03.579 +07:00 [INF] Quartz Scheduler created
+2026-04-20 17:16:03.595 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-20 17:16:03.598 +07:00 [INF] RAMJobStore initialized.
+2026-04-20 17:16:03.604 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-20 17:16:03.623 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-20 17:16:03.632 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-20 17:16:03.649 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-20 17:16:03.659 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-20 17:16:05.244 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-20 17:16:08.105 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (133ms)
+2026-04-20 17:16:08.105 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (116ms)
+2026-04-20 17:16:08.232 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:16:08.105 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (107ms)
+2026-04-20 17:16:08.859 +07:00 [INF] POST /api/online-status/heartbeat → 200 (892ms)
+2026-04-20 17:16:09.095 +07:00 [INF] POST /api/online-status/heartbeat → 200 (914ms)
+2026-04-20 17:16:09.077 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:16:09.072 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:16:09.173 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:16:09.206 +07:00 [INF] GET /api/notifications → 200 (321ms)
+2026-04-20 17:16:37.679 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-20 17:17:07.711 +07:00 [INF] POST /api/online-status/heartbeat → 200 (104ms)
+2026-04-20 17:17:38.238 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-20 17:18:02.973 +07:00 [INF] GET /api/children → 200 (54ms)
+2026-04-20 17:18:07.739 +07:00 [INF] POST /api/online-status/heartbeat → 200 (136ms)
+2026-04-20 17:18:38.297 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-20 17:19:08.235 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-20 17:19:45.306 +07:00 [INF] POST /api/online-status/heartbeat → 200 (132ms)
+2026-04-20 17:20:08.301 +07:00 [INF] POST /api/online-status/heartbeat → 200 (114ms)
+2026-04-20 17:20:37.114 +07:00 [INF] GET /api/notifications → 200 (11ms)
+2026-04-20 17:20:37.678 +07:00 [INF] POST /api/online-status/heartbeat → 200 (75ms)
+2026-04-20 17:20:38.681 +07:00 [INF] POST /api/notifications/3/read → 405 (0ms)
+2026-04-20 17:20:39.735 +07:00 [INF] POST /api/notifications/3/read → 405 (0ms)
+2026-04-20 17:20:39.859 +07:00 [INF] POST /api/notifications/3/read → 405 (0ms)
+2026-04-20 17:21:08.257 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-20 17:21:38.270 +07:00 [INF] POST /api/online-status/heartbeat → 200 (88ms)
+2026-04-20 17:22:06.118 +07:00 [INF] GET /api/children → 200 (29ms)
+2026-04-20 17:22:07.738 +07:00 [INF] POST /api/online-status/heartbeat → 200 (134ms)
+2026-04-20 17:22:10.646 +07:00 [INF] GET /api/notifications → 200 (17ms)
+2026-04-20 17:22:36.393 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:22:36.393 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:22:36.419 +07:00 [INF] GET /hubs/notifications → 101 (387468ms)
+2026-04-20 17:22:36.419 +07:00 [INF] GET /hubs/notifications → 101 (387384ms)
+2026-04-20 17:22:37.012 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:22:37.017 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:22:37.024 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:22:37.030 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:22:37.064 +07:00 [INF] GET /api/notifications → 200 (18ms)
+2026-04-20 17:22:37.077 +07:00 [INF] POST /api/online-status/heartbeat → 200 (59ms)
+2026-04-20 17:22:37.077 +07:00 [INF] POST /api/online-status/heartbeat → 200 (57ms)
+2026-04-20 17:22:37.523 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:22:37.541 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:22:37.559 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:22:39.439 +07:00 [INF] GET /api/children → 200 (13ms)
+2026-04-20 17:23:07.052 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-20 17:23:37.482 +07:00 [INF] POST /api/online-status/heartbeat → 200 (69ms)
+2026-04-20 17:23:48.175 +07:00 [INF] GET /api/children → 200 (12ms)
+2026-04-20 17:23:48.464 +07:00 [INF] GET /api/notifications → 200 (15ms)
+2026-04-20 17:23:51.071 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:23:51.072 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:23:51.073 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:23:51.073 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:23:51.082 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:23:51.090 +07:00 [INF] GET /hubs/notifications → 101 (73571ms)
+2026-04-20 17:23:51.091 +07:00 [INF] GET /hubs/notifications → 101 (73558ms)
+2026-04-20 17:23:51.097 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:24:21.073 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:24:21.072 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:24:21.083 +07:00 [INF] GET /hubs/notifications → 101 (29992ms)
+2026-04-20 17:24:21.086 +07:00 [INF] GET /hubs/notifications → 101 (30007ms)
+2026-04-20 17:24:21.116 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-20 17:24:21.122 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-20 17:24:21.129 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
+2026-04-20 17:25:16.409 +07:00 [INF] Family Guardian API starting...
+2026-04-20 17:25:16.548 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-20 17:25:16.550 +07:00 [INF] Quartz Scheduler created
+2026-04-20 17:25:16.554 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-20 17:25:16.556 +07:00 [INF] RAMJobStore initialized.
+2026-04-20 17:25:16.560 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-20 17:25:16.567 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-20 17:25:16.570 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-20 17:25:16.587 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-20 17:25:16.589 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-20 17:25:17.983 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-20 17:25:23.016 +07:00 [INF] GET /api/notifications → 200 (211ms)
+2026-04-20 17:25:24.484 +07:00 [INF] GET /api/children → 200 (77ms)
+2026-04-20 17:25:32.538 +07:00 [INF] POST /api/online-status/heartbeat → 200 (229ms)
+2026-04-20 17:25:41.430 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (36ms)
+2026-04-20 17:25:41.431 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (41ms)
+2026-04-20 17:25:41.446 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (6ms)
+2026-04-20 17:25:41.440 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (44ms)
+2026-04-20 17:25:41.475 +07:00 [INF] GET /api/notifications → 200 (35ms)
+2026-04-20 17:25:41.484 +07:00 [INF] POST /api/online-status/heartbeat → 200 (60ms)
+2026-04-20 17:25:41.485 +07:00 [INF] POST /api/online-status/heartbeat → 200 (61ms)
+2026-04-20 17:25:42.232 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:25:42.232 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:25:42.341 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:26:11.526 +07:00 [INF] POST /api/online-status/heartbeat → 200 (182ms)
+2026-04-20 17:26:11.534 +07:00 [INF] GET /api/children → 200 (13ms)
+2026-04-20 17:26:13.970 +07:00 [INF] GET /api/notifications → 200 (9ms)
+2026-04-20 17:26:14.524 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:26:14.527 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:26:14.537 +07:00 [INF] GET /hubs/notifications → 101 (32419ms)
+2026-04-20 17:26:14.537 +07:00 [INF] GET /hubs/notifications → 101 (32344ms)
+2026-04-20 17:26:14.553 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:26:14.567 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:26:14.572 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:26:14.576 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:26:14.563 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:26:14.590 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:26:14.603 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:26:14.665 +07:00 [INF] POST /api/online-status/heartbeat → 200 (116ms)
+2026-04-20 17:26:14.665 +07:00 [INF] POST /api/online-status/heartbeat → 200 (114ms)
+2026-04-20 17:26:45.234 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-20 17:26:50.672 +07:00 [INF] GET /api/notifications → 200 (12ms)
+2026-04-20 17:27:14.657 +07:00 [INF] POST /api/online-status/heartbeat → 200 (109ms)
+2026-04-20 17:27:44.692 +07:00 [INF] POST /api/online-status/heartbeat → 200 (143ms)
+2026-04-20 17:27:53.150 +07:00 [INF] GET /api/notifications → 200 (10ms)
+2026-04-20 17:28:14.619 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-20 17:28:45.273 +07:00 [INF] POST /api/online-status/heartbeat → 200 (91ms)
+2026-04-20 17:29:15.276 +07:00 [INF] POST /api/online-status/heartbeat → 200 (94ms)
+2026-04-20 17:29:45.368 +07:00 [INF] POST /api/online-status/heartbeat → 200 (187ms)
+2026-04-20 17:30:27.257 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-20 17:31:27.257 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-20 17:32:27.240 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-20 17:32:44.600 +07:00 [INF] POST /api/online-status/heartbeat → 200 (52ms)
+2026-04-20 17:33:01.980 +07:00 [INF] GET /api/notifications → 200 (11ms)
+2026-04-20 17:33:15.247 +07:00 [INF] POST /api/online-status/heartbeat → 200 (52ms)
+2026-04-20 17:33:45.282 +07:00 [INF] POST /api/online-status/heartbeat → 200 (97ms)
+2026-04-20 17:34:27.265 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-20 17:35:27.241 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-20 17:36:27.248 +07:00 [INF] POST /api/online-status/heartbeat → 200 (55ms)
+2026-04-20 17:36:31.214 +07:00 [INF] GET /api/notifications → 200 (9ms)
+2026-04-20 17:37:03.341 +07:00 [INF] GET /api/notifications → 200 (9ms)
+2026-04-20 17:37:04.191 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:37:04.197 +07:00 [INF] GET /hubs/notifications → 101 (649625ms)
+2026-04-20 17:37:04.207 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:37:04.209 +07:00 [INF] GET /hubs/notifications → 101 (649621ms)
+2026-04-20 17:37:11.666 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:37:11.679 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:37:11.684 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-20 17:37:11.693 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:37:11.707 +07:00 [INF] GET /api/notifications → 200 (16ms)
+2026-04-20 17:37:11.726 +07:00 [INF] POST /api/online-status/heartbeat → 200 (59ms)
+2026-04-20 17:37:11.728 +07:00 [INF] POST /api/online-status/heartbeat → 200 (50ms)
+2026-04-20 17:37:17.236 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (3ms)
+2026-04-20 17:37:17.236 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:37:17.237 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:37:17.236 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:37:17.274 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:37:17.280 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:37:17.284 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:37:17.313 +07:00 [INF] POST /api/online-status/heartbeat → 200 (75ms)
+2026-04-20 17:37:17.313 +07:00 [INF] POST /api/online-status/heartbeat → 200 (77ms)
+2026-04-20 17:37:48.276 +07:00 [INF] POST /api/online-status/heartbeat → 200 (81ms)
+2026-04-20 17:38:18.235 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-20 17:38:48.163 +07:00 [INF] POST /api/online-status/heartbeat → 200 (75ms)
+2026-04-20 17:39:18.263 +07:00 [INF] POST /api/online-status/heartbeat → 200 (72ms)
+2026-04-20 17:39:21.494 +07:00 [INF] GET /api/notifications → 200 (22ms)
+2026-04-20 17:39:24.134 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:39:24.134 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:39:24.159 +07:00 [INF] GET /hubs/notifications → 101 (126876ms)
+2026-04-20 17:39:24.162 +07:00 [INF] GET /hubs/notifications → 101 (126891ms)
+2026-04-20 17:39:24.467 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:39:24.467 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:39:24.468 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:39:24.468 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:39:24.478 +07:00 [INF] GET /api/notifications → 200 (9ms)
+2026-04-20 17:39:24.639 +07:00 [INF] POST /api/online-status/heartbeat → 200 (95ms)
+2026-04-20 17:39:24.641 +07:00 [INF] POST /api/online-status/heartbeat → 200 (99ms)
+2026-04-20 17:39:24.644 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:39:24.659 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:39:24.677 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:39:25.943 +07:00 [INF] GET /api/children → 200 (19ms)
+2026-04-20 17:39:55.235 +07:00 [INF] POST /api/online-status/heartbeat → 200 (50ms)
+2026-04-20 17:40:09.232 +07:00 [INF] GET /api/children → 200 (11ms)
+2026-04-20 17:40:09.482 +07:00 [INF] GET /api/notifications → 200 (8ms)
+2026-04-20 17:40:24.538 +07:00 [INF] POST /api/online-status/heartbeat → 200 (71ms)
+2026-04-20 17:40:41.207 +07:00 [INF] GET /api/notifications → 200 (7ms)
+2026-04-20 17:40:44.155 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:40:44.156 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:40:44.194 +07:00 [INF] GET /hubs/notifications → 101 (79556ms)
+2026-04-20 17:40:44.198 +07:00 [INF] GET /hubs/notifications → 101 (79545ms)
+2026-04-20 17:40:44.485 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:40:44.487 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:40:44.491 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:40:44.597 +07:00 [INF] GET /api/notifications → 200 (107ms)
+2026-04-20 17:40:44.652 +07:00 [INF] POST /api/online-status/heartbeat → 200 (161ms)
+2026-04-20 17:40:44.652 +07:00 [INF] POST /api/online-status/heartbeat → 200 (161ms)
+2026-04-20 17:40:44.658 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:40:44.660 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-20 17:40:44.707 +07:00 [INF] Guardian 1 joined notification group
+2026-04-20 17:40:44.706 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-20 17:40:47.922 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:40:47.922 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-20 17:40:47.928 +07:00 [INF] GET /hubs/notifications → 101 (3237ms)
+2026-04-20 17:40:47.929 +07:00 [INF] GET /hubs/notifications → 101 (3276ms)
+2026-04-20 17:41:55.837 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-20 17:41:55.846 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-20 17:41:55.873 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

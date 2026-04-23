@@ -248,5 +248,43 @@ public class ExtensionService : IExtensionService
         }
     }
 
+    public async Task UpdateExtensionPingAsync(string googleId)
+{
+    try
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+        if (user == null) return;
+
+        var status = await _context.UserOnlineStatuses
+            .FirstOrDefaultAsync(o => o.UserId == user.Id);
+
+        if (status == null)
+        {
+            status = new UserOnlineStatus
+            {
+                UserId = user.Id,
+                IsOnline = true,
+                LastSeenAt = DateTime.UtcNow,
+                ExtensionLastSeen = DateTime.UtcNow,
+                ExtensionActive = true
+            };
+            _context.UserOnlineStatuses.Add(status);
+        }
+        else
+        {
+            status.ExtensionLastSeen = DateTime.UtcNow;
+            status.ExtensionActive = true;
+            status.LastSeenAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error updating extension ping");
+    }
+}
+
     
 }

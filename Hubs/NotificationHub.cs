@@ -13,6 +13,13 @@ public class NotificationHub : Hub
         _logger = logger;
     }
 
+    // ✅ THÊM METHOD NÀY
+    public async Task JoinGuardianGroup(string guardianId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"guardian_{guardianId}");
+        _logger.LogInformation("Guardian {GuardianId} joined notification group", guardianId);
+    }
+
     public override async Task OnConnectedAsync()
     {
         var userId = Context.UserIdentifier;

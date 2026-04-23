@@ -1,0 +1,52 @@
+2026-04-21 10:44:17.157 +07:00 [INF] Family Guardian API starting...
+2026-04-21 10:44:17.328 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-21 10:44:17.388 +07:00 [INF] Quartz Scheduler created
+2026-04-21 10:44:17.411 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-21 10:44:17.624 +07:00 [INF] RAMJobStore initialized.
+2026-04-21 10:44:17.686 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-21 10:44:17.718 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-21 10:44:17.736 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-21 10:44:17.772 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-21 10:44:17.787 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-21 10:44:19.721 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-21 10:44:29.913 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (81ms)
+2026-04-21 10:44:29.913 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (81ms)
+2026-04-21 10:44:29.913 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (81ms)
+2026-04-21 10:44:29.913 +07:00 [INF] POST /hubs/notifications/negotiate → 401 (81ms)
+2026-04-21 10:44:29.965 +07:00 [INF] POST /api/online-status/heartbeat → 401 (1ms)
+2026-04-21 10:44:29.958 +07:00 [INF] POST /api/online-status/heartbeat → 401 (1ms)
+2026-04-21 10:44:30.368 +07:00 [INF] GET /api/children → 401 (8ms)
+2026-04-21 10:44:31.108 +07:00 [INF] POST /api/auth/refresh → 200 (772ms)
+2026-04-21 10:44:31.165 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (20ms)
+2026-04-21 10:44:31.165 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (20ms)
+2026-04-21 10:44:31.301 +07:00 [INF] POST /api/online-status/heartbeat → 200 (162ms)
+2026-04-21 10:44:31.301 +07:00 [INF] POST /api/online-status/heartbeat → 200 (162ms)
+2026-04-21 10:44:31.334 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-21 10:44:31.334 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-21 10:44:31.348 +07:00 [INF] Guardian 1 joined notification group
+2026-04-21 10:44:31.397 +07:00 [INF] GET /api/children → 200 (252ms)
+2026-04-21 10:44:32.575 +07:00 [INF] GET /api/notifications → 200 (63ms)
+2026-04-21 10:45:00.265 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-21 10:45:29.813 +07:00 [INF] POST /api/online-status/heartbeat → 200 (74ms)
+2026-04-21 10:46:00.260 +07:00 [INF] POST /api/online-status/heartbeat → 200 (56ms)
+2026-04-21 10:46:30.243 +07:00 [INF] POST /api/online-status/heartbeat → 200 (51ms)
+2026-04-21 10:47:00.236 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-21 10:47:30.237 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-21 10:47:51.938 +07:00 [INF] GET /api/children → 200 (52ms)
+2026-04-21 10:48:00.249 +07:00 [INF] POST /api/online-status/heartbeat → 200 (52ms)
+2026-04-21 10:48:19.361 +07:00 [INF] GET /api/notifications → 200 (15ms)
+2026-04-21 10:48:25.777 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-21 10:48:25.777 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-21 10:48:25.779 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-21 10:48:25.796 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-21 10:48:25.796 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-21 10:48:25.827 +07:00 [INF] GET /hubs/notifications → 101 (234519ms)
+2026-04-21 10:48:25.840 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-21 10:48:25.858 +07:00 [INF] GET /hubs/notifications → 101 (234654ms)
+2026-04-21 10:48:55.760 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-21 10:48:55.760 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-21 10:48:55.763 +07:00 [INF] GET /hubs/notifications → 101 (29971ms)
+2026-04-21 10:48:55.764 +07:00 [INF] GET /hubs/notifications → 101 (29926ms)
+2026-04-21 10:48:55.774 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-21 10:48:55.777 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-21 10:48:55.783 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

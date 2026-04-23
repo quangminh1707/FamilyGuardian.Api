@@ -11,4 +11,6 @@ public interface IExtensionService
 
      Task<bool> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId);
     Task<bool> ToggleFilterAsync(int childId, bool enabled, int requestingGuardianId);
+    Task UpdateExtensionPingAsync(string googleId);
+    
 }
