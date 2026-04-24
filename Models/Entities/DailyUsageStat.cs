@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace FamilyGuardian.Api.Models.Entities;
 
 public class DailyUsageStat
@@ -13,4 +15,10 @@ public class DailyUsageStat
 
     public User Child { get; set; } = null!;
     public AllowedWebsite Website { get; set; } = null!;
+
+    [Column("warning1_sent")]
+public bool Warning1Sent { get; set; } = false;
+ 
+[Column("warning2_sent")]
+public bool Warning2Sent { get; set; } = false;
 }

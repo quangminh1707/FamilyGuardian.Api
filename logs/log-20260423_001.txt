@@ -33,3 +33,40 @@
 2026-04-23 11:10:15.256 +07:00 [INF] POST /api/online-status/heartbeat → 200 (75ms)
 2026-04-23 11:10:45.268 +07:00 [INF] POST /api/online-status/heartbeat → 200 (77ms)
 2026-04-23 11:11:15.287 +07:00 [INF] POST /api/online-status/heartbeat → 200 (94ms)
+2026-04-23 11:14:46.852 +07:00 [INF] Family Guardian API starting...
+2026-04-23 11:14:47.148 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-23 11:14:47.151 +07:00 [INF] Quartz Scheduler created
+2026-04-23 11:14:47.155 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-23 11:14:47.159 +07:00 [INF] RAMJobStore initialized.
+2026-04-23 11:14:47.161 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-23 11:14:47.163 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-23 11:14:47.165 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-23 11:14:47.177 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-23 11:14:47.181 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-23 11:14:48.616 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-23 11:14:49.272 +07:00 [INF] PATCH /api/children/2/filter → 200 (499ms)
+2026-04-23 11:14:49.435 +07:00 [INF] GET /api/children/2 → 200 (137ms)
+2026-04-23 11:14:50.401 +07:00 [INF] PATCH /api/children/2/filter → 200 (110ms)
+2026-04-23 11:14:50.442 +07:00 [INF] GET /api/children/2 → 200 (33ms)
+2026-04-23 11:14:52.056 +07:00 [INF] PATCH /api/children/2/filter → 200 (69ms)
+2026-04-23 11:14:52.126 +07:00 [INF] GET /api/children/2 → 200 (31ms)
+2026-04-23 11:14:54.203 +07:00 [INF] PATCH /api/children/2/filter → 200 (81ms)
+2026-04-23 11:14:54.246 +07:00 [INF] GET /api/children/2 → 200 (32ms)
+2026-04-23 11:14:55.005 +07:00 [INF] GET /api/children/2/websites → 200 (17ms)
+2026-04-23 11:15:15.259 +07:00 [INF] POST /api/online-status/heartbeat → 200 (69ms)
+2026-04-23 11:15:45.235 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-23 11:17:04.251 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-23 11:18:04.259 +07:00 [INF] POST /api/online-status/heartbeat → 200 (73ms)
+2026-04-23 11:19:04.249 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-23 11:19:19.923 +07:00 [INF] POST /api/online-status/heartbeat → 200 (72ms)
+2026-04-23 11:19:23.249 +07:00 [INF] GET /api/children → 200 (33ms)
+2026-04-23 11:19:27.431 +07:00 [INF] GET /api/access-logs/2 → 404 (8ms)
+2026-04-23 11:19:27.436 +07:00 [INF] GET /api/children/2/websites → 200 (13ms)
+2026-04-23 11:19:27.449 +07:00 [INF] GET /api/children/2 → 200 (26ms)
+2026-04-23 11:19:28.449 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-23 11:19:45.244 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-23 11:20:15.259 +07:00 [INF] POST /api/online-status/heartbeat → 200 (72ms)
+2026-04-23 11:21:04.249 +07:00 [INF] POST /api/online-status/heartbeat → 200 (56ms)
+2026-04-23 11:21:22.898 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-23 11:21:22.903 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-23 11:21:22.915 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

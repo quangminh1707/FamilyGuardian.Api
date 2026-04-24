@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
  
     public DbSet<WebSession> WebSessions => Set<WebSession>();
+    public DbSet<WebsiteWarningConfig> WebsiteWarningConfigs => Set<WebsiteWarningConfig>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────
     public DbSet<ChildSpResult> ChildSpResults => Set<ChildSpResult>();

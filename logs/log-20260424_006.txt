@@ -1,0 +1,124 @@
+2026-04-24 21:32:32.731 +07:00 [INF] Family Guardian API starting...
+2026-04-24 21:32:32.854 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-24 21:32:32.857 +07:00 [INF] Quartz Scheduler created
+2026-04-24 21:32:32.860 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-24 21:32:32.862 +07:00 [INF] RAMJobStore initialized.
+2026-04-24 21:32:32.864 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-24 21:32:32.866 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-24 21:32:32.869 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-24 21:32:32.880 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-24 21:32:32.883 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-24 21:32:34.163 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-24 21:36:05.666 +07:00 [INF] Family Guardian API starting...
+2026-04-24 21:36:05.867 +07:00 [INF] Initialized Scheduler Signaller of type: Quartz.Core.SchedulerSignalerImpl
+2026-04-24 21:36:05.872 +07:00 [INF] Quartz Scheduler created
+2026-04-24 21:36:05.875 +07:00 [INF] JobFactory set to: Quartz.Simpl.MicrosoftDependencyInjectionJobFactory
+2026-04-24 21:36:05.878 +07:00 [INF] RAMJobStore initialized.
+2026-04-24 21:36:05.883 +07:00 [INF] Quartz Scheduler 3.18.0.0 - 'QuartzScheduler' with instanceId 'NON_CLUSTERED' initialized
+2026-04-24 21:36:05.891 +07:00 [INF] Using thread pool 'Quartz.Simpl.DefaultThreadPool', size: 10
+2026-04-24 21:36:05.897 +07:00 [INF] Using job store 'Quartz.Simpl.RAMJobStore', supports persistence: False, clustered: False
+2026-04-24 21:36:05.915 +07:00 [INF] Adding 1 jobs, 1 triggers.
+2026-04-24 21:36:05.918 +07:00 [INF] Adding job: DEFAULT.SendScheduledNotificationsJob
+2026-04-24 21:36:07.841 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+2026-04-24 21:36:08.350 +07:00 [WRN] Extension offline: Child=2 (Minh Dương)
+2026-04-24 21:36:09.940 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (93ms)
+2026-04-24 21:36:09.940 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (97ms)
+2026-04-24 21:36:10.337 +07:00 [INF] POST /api/online-status/heartbeat → 200 (488ms)
+2026-04-24 21:36:10.018 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (0ms)
+2026-04-24 21:36:10.459 +07:00 [INF] POST /api/online-status/heartbeat → 200 (457ms)
+2026-04-24 21:36:10.491 +07:00 [INF] POST /hubs/notifications/negotiate → 200 (1ms)
+2026-04-24 21:36:10.626 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-24 21:36:10.971 +07:00 [INF] GET /api/children/2/websites → 200 (253ms)
+2026-04-24 21:36:10.971 +07:00 [INF] GET /api/children/2 → 200 (406ms)
+2026-04-24 21:36:11.174 +07:00 [INF] Notification saved: Guardian=1, Child=2, NotificationId=25
+2026-04-24 21:36:12.445 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-24 21:36:12.451 +07:00 [INF] User 1 connected to NotificationHub
+2026-04-24 21:36:12.484 +07:00 [INF] Guardian 1 joined notification group
+2026-04-24 21:36:35.178 +07:00 [INF] GET /api/access-logs/2 → 404 (0ms)
+2026-04-24 21:36:39.709 +07:00 [INF] POST /api/online-status/heartbeat → 200 (54ms)
+2026-04-24 21:36:41.256 +07:00 [INF] GET /api/website-check → 200 (59ms)
+2026-04-24 21:36:42.530 +07:00 [INF] GET /api/children/2/websites → 200 (12ms)
+2026-04-24 21:36:43.408 +07:00 [INF] POST /api/children/2/websites → 201 (225ms)
+2026-04-24 21:36:43.439 +07:00 [INF] GET /api/children/2/websites → 200 (18ms)
+2026-04-24 21:36:45.472 +07:00 [INF] GET /api/warning-configs/by-child/2 → 200 (34ms)
+2026-04-24 21:36:50.326 +07:00 [INF] POST /api/warning-configs → 200 (168ms)
+2026-04-24 21:36:50.343 +07:00 [INF] GET /api/warning-configs/by-child/2 → 200 (10ms)
+2026-04-24 21:36:55.430 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:36:55.626 +07:00 [INF] POST /api/extension/ping → 200 (447ms)
+2026-04-24 21:37:00.679 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:00.952 +07:00 [INF] Extension access check: GoogleId=109858596823124210901, Domain=vatvostudio.vn, Allowed=true
+2026-04-24 21:37:00.959 +07:00 [INF] GET /api/extension/check → 200 (387ms)
+2026-04-24 21:37:05.374 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:05.483 +07:00 [INF] POST /api/extension/ping → 200 (292ms)
+2026-04-24 21:37:09.745 +07:00 [INF] POST /api/online-status/heartbeat → 200 (92ms)
+2026-04-24 21:37:13.480 +07:00 [INF] GET /api/children/2/websites → 200 (11ms)
+2026-04-24 21:37:15.061 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:15.223 +07:00 [INF] POST /api/extension/ping → 200 (228ms)
+2026-04-24 21:37:25.044 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:25.111 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:25.115 +07:00 [INF] POST /api/extension/ping → 200 (136ms)
+2026-04-24 21:37:25.275 +07:00 [INF] POST /api/extension/heartbeat → 200 (291ms)
+2026-04-24 21:37:39.131 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:39.184 +07:00 [INF] POST /api/extension/ping → 200 (4202ms)
+2026-04-24 21:37:39.776 +07:00 [INF] POST /api/online-status/heartbeat → 200 (114ms)
+2026-04-24 21:37:43.509 +07:00 [INF] GET /api/children/2/websites → 200 (10ms)
+2026-04-24 21:37:45.039 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:45.134 +07:00 [INF] POST /api/extension/ping → 200 (160ms)
+2026-04-24 21:37:54.975 +07:00 [INF] GET /api/extension/heartbeat → 405 (0ms)
+2026-04-24 21:37:55.208 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:37:55.271 +07:00 [INF] POST /api/extension/ping → 200 (148ms)
+2026-04-24 21:38:05.049 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:05.098 +07:00 [INF] POST /api/extension/ping → 200 (120ms)
+2026-04-24 21:38:10.241 +07:00 [INF] POST /api/online-status/heartbeat → 200 (52ms)
+2026-04-24 21:38:15.058 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:15.109 +07:00 [INF] POST /api/extension/ping → 200 (126ms)
+2026-04-24 21:38:25.045 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:25.119 +07:00 [INF] POST /api/extension/ping → 200 (146ms)
+2026-04-24 21:38:35.062 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:35.132 +07:00 [INF] POST /api/extension/ping → 200 (157ms)
+2026-04-24 21:38:40.242 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-24 21:38:45.058 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:45.109 +07:00 [INF] POST /api/extension/ping → 200 (127ms)
+2026-04-24 21:38:55.050 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:38:55.153 +07:00 [INF] POST /api/extension/ping → 200 (171ms)
+2026-04-24 21:39:05.351 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:05.409 +07:00 [INF] Extension access check: GoogleId=109858596823124210901, Domain=vatvostudio.vn, Allowed=true
+2026-04-24 21:39:05.421 +07:00 [INF] GET /api/extension/check → 200 (461ms)
+2026-04-24 21:39:05.437 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:05.507 +07:00 [INF] POST /api/extension/ping → 200 (436ms)
+2026-04-24 21:39:09.736 +07:00 [INF] POST /api/online-status/heartbeat → 200 (76ms)
+2026-04-24 21:39:13.541 +07:00 [INF] GET /api/children/2/websites → 200 (11ms)
+2026-04-24 21:39:15.262 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:15.315 +07:00 [INF] POST /api/extension/ping → 200 (337ms)
+2026-04-24 21:39:25.050 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:25.177 +07:00 [INF] POST /api/extension/heartbeat → 200 (194ms)
+2026-04-24 21:39:25.253 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:25.265 +07:00 [INF] POST /api/extension/ping → 200 (282ms)
+2026-04-24 21:39:35.042 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:35.237 +07:00 [INF] POST /api/extension/ping → 200 (260ms)
+2026-04-24 21:39:35.474 +07:00 [INF] POST /api/children/2/websites/28/recheck → 200 (546ms)
+2026-04-24 21:39:35.500 +07:00 [INF] GET /api/children/2/websites → 200 (13ms)
+2026-04-24 21:39:36.229 +07:00 [INF] POST /api/children/2/websites/28/recheck → 200 (157ms)
+2026-04-24 21:39:36.307 +07:00 [INF] GET /api/children/2/websites → 200 (14ms)
+2026-04-24 21:39:36.310 +07:00 [INF] POST /api/children/2/websites/28/recheck → 200 (67ms)
+2026-04-24 21:39:36.391 +07:00 [INF] GET /api/children/2/websites → 200 (14ms)
+2026-04-24 21:39:36.777 +07:00 [INF] POST /api/children/2/websites/28/recheck → 200 (187ms)
+2026-04-24 21:39:36.806 +07:00 [INF] GET /api/children/2/websites → 200 (15ms)
+2026-04-24 21:39:39.801 +07:00 [INF] POST /api/online-status/heartbeat → 200 (151ms)
+2026-04-24 21:39:42.836 +07:00 [INF] DELETE /api/children/2/websites/28 → 204 (109ms)
+2026-04-24 21:39:42.860 +07:00 [INF] GET /api/children/2/websites → 200 (11ms)
+2026-04-24 21:39:45.044 +07:00 [INF] Google token verified for user: minhduong170703@gmail.com
+2026-04-24 21:39:45.094 +07:00 [INF] POST /api/extension/ping → 200 (113ms)
+2026-04-24 21:40:10.262 +07:00 [INF] POST /api/online-status/heartbeat → 200 (72ms)
+2026-04-24 21:40:12.112 +07:00 [WRN] Extension offline: Child=2 (Minh Dương)
+2026-04-24 21:40:12.164 +07:00 [INF] Notification saved: Guardian=1, Child=2, NotificationId=26
+2026-04-24 21:40:12.225 +07:00 [INF] GET /api/children/2 → 200 (12ms)
+2026-04-24 21:40:40.247 +07:00 [INF] POST /api/online-status/heartbeat → 200 (53ms)
+2026-04-24 21:41:39.062 +07:00 [INF] POST /api/online-status/heartbeat → 200 (71ms)
+2026-04-24 21:41:39.680 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-24 21:41:39.680 +07:00 [INF] User 1 disconnected from NotificationHub
+2026-04-24 21:41:39.707 +07:00 [INF] GET /hubs/notifications → 101 (327272ms)
+2026-04-24 21:41:39.719 +07:00 [INF] GET /hubs/notifications → 101 (328852ms)
+2026-04-24 21:41:39.803 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED shutting down.
+2026-04-24 21:41:39.852 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED paused.
+2026-04-24 21:41:39.881 +07:00 [INF] Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.

@@ -4,6 +4,7 @@ using FamilyGuardian.Api.Models;
 using FamilyGuardian.Api.Models.Entities;
 using FamilyGuardian.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FamilyGuardian.Api.Services;
 
@@ -28,25 +29,53 @@ public class ExtensionConfigResponse
     public string? Email { get; set; }
 }
 
+public class HeartbeatResult
+{
+    public bool LimitExceeded { get; set; } = false;
+
+    /// <summary>Không null = warning kích hoạt ngay heartbeat này</summary>
+    public HeartbeatWarning? Warning { get; set; }
+
+    /// <summary>Giây đến warning mốc 1 → extension đặt alarm chính xác</summary>
+    public int? SecondsUntilWarning1 { get; set; }
+    public string? WarningMessage1 { get; set; }
+
+    /// <summary>Giây đến warning mốc 2</summary>
+    public int? SecondsUntilWarning2 { get; set; }
+    public string? WarningMessage2 { get; set; }
+
+    /// <summary>Giây còn lại đến khi bị chặn</summary>
+    public int? SecondsUntilBlock { get; set; }
+}
+
+public class HeartbeatWarning
+{
+    public string Message { get; set; } = string.Empty;
+    public int RemainingSeconds { get; set; }
+}
+
 public class ExtensionService : IExtensionService
 {
     private readonly AppDbContext _context;
     private readonly ILogger<ExtensionService> _logger;
+    private readonly IHubContext<FamilyGuardian.Api.Hubs.NotificationHub> _hubContext;
 
-    public ExtensionService(AppDbContext context, ILogger<ExtensionService> logger)
+    public ExtensionService(
+        AppDbContext context,
+        ILogger<ExtensionService> logger,
+        IHubContext<FamilyGuardian.Api.Hubs.NotificationHub> hubContext)
     {
         _context = context;
         _logger = logger;
+        _hubContext = hubContext;
     }
 
     public async Task<ExtensionCheckResponse> CheckAccessAsync(string googleId, string domain)
     {
         try
         {
-            // Normalize domain
             domain = DomainNormalizer.Normalize(domain);
 
-            // Call stored procedure
             var result = await _context.CheckWebAccessSpResults.FromSqlInterpolated(
                 $"CALL sp_ExtensionCheckAccess({googleId}, {domain})"
             ).ToListAsync();
@@ -54,10 +83,9 @@ public class ExtensionService : IExtensionService
             if (result.Count == 0)
             {
                 _logger.LogWarning("Stored procedure returned no results for GoogleId={GoogleId}, Domain={Domain}", googleId, domain);
-                // Fail-closed: block access if no response from procedure
-                return new ExtensionCheckResponse 
-                { 
-                    Allowed = false, 
+                return new ExtensionCheckResponse
+                {
+                    Allowed = false,
                     Reason = "Không thể xác định trạng thái - chặn để an toàn",
                     Domain = domain
                 };
@@ -68,13 +96,11 @@ public class ExtensionService : IExtensionService
             string reason = row.Reason ?? "";
             int? websiteId = row.AllowedWebsiteId;
 
-            // Log the access attempt
             await LogAccessAsync(googleId, domain, allowed, websiteId);
 
             _logger.LogInformation(
                 "Extension access check: GoogleId={GoogleId}, Domain={Domain}, Allowed={Allowed}",
-                googleId, domain, allowed
-            );
+                googleId, domain, allowed);
 
             return new ExtensionCheckResponse
             {
@@ -87,11 +113,9 @@ public class ExtensionService : IExtensionService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error checking access for domain {Domain}", domain);
-            // On error, BLOCK access (fail-closed) for security
-            // Better to block legitimate sites than allow malicious ones
-            return new ExtensionCheckResponse 
-            { 
-                Allowed = false, 
+            return new ExtensionCheckResponse
+            {
+                Allowed = false,
                 Reason = "Lỗi server - chặn truy cập (an toàn)",
                 Domain = domain
             };
@@ -127,80 +151,171 @@ public class ExtensionService : IExtensionService
         }
     }
 
-  public async Task<bool> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId)
-{
-    try
+    // ── Đổi return type: bool → HeartbeatResult ──────────────────────────────
+    public async Task<HeartbeatResult> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId)
     {
-        domain = DomainNormalizer.Normalize(domain);
+        var result = new HeartbeatResult();
 
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
-
-        if (user == null) return false;
-        if (!allowedWebsiteId.HasValue) return false;
-
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var dailyStat = await _context.DailyUsageStats
-            .FirstOrDefaultAsync(d =>
-                d.ChildId == user.Id
-                && d.AllowedWebsiteId == allowedWebsiteId.Value
-                && d.UsageDate == today);
-
-        if (dailyStat == null)
+        try
         {
-            dailyStat = new DailyUsageStat
+            domain = DomainNormalizer.Normalize(domain);
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+
+            if (user == null) return result;
+
+            // ── Gộp ping vào heartbeat: update extension_last_seen ────────────
+            // Extension gọi heartbeat mỗi 10s, không cần alarm ping riêng nữa.
+            await UpdateExtensionLastSeenAsync(user.Id);
+
+            if (!allowedWebsiteId.HasValue) return result;
+
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var dailyStat = await _context.DailyUsageStats
+                .FirstOrDefaultAsync(d =>
+                    d.ChildId == user.Id
+                    && d.AllowedWebsiteId == allowedWebsiteId.Value
+                    && d.UsageDate == today);
+
+            if (dailyStat == null)
             {
-                ChildId = user.Id,
-                AllowedWebsiteId = allowedWebsiteId.Value,
-                Domain = domain,
-                UsageDate = today,
-                TotalSeconds = 30,
-                RequestCount = 1,
-                LastUpdated = DateTime.UtcNow
-            };
-            _context.DailyUsageStats.Add(dailyStat);
+                dailyStat = new DailyUsageStat
+                {
+                    ChildId = user.Id,
+                    AllowedWebsiteId = allowedWebsiteId.Value,
+                    Domain = domain,
+                    UsageDate = today,
+                    TotalSeconds = 30,   // heartbeat mỗi 30s
+                    RequestCount = 1,
+                    LastUpdated = DateTime.UtcNow
+                };
+                _context.DailyUsageStats.Add(dailyStat);
+            }
+            else
+            {
+                dailyStat.TotalSeconds += 30;  // heartbeat mỗi 10s
+                dailyStat.RequestCount += 1;
+                dailyStat.LastUpdated = DateTime.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var website = await _context.AllowedWebsites
+                .FirstOrDefaultAsync(w => w.Id == allowedWebsiteId.Value);
+
+            if (website?.TimeLimitMinutes != null)
+            {
+                int limitSeconds = website.TimeLimitMinutes.Value * 60;
+                double usedPercent = (double)dailyStat.TotalSeconds / limitSeconds * 100;
+                bool exceeded = dailyStat.TotalSeconds >= limitSeconds;
+
+                var config = await _context.WebsiteWarningConfigs
+                    .FirstOrDefaultAsync(c => c.AllowedWebsiteId == website.Id && c.IsActive);
+
+                if (config != null)
+                {
+                    int remainingSeconds = Math.Max(0, limitSeconds - dailyStat.TotalSeconds);
+
+                    // ── Mốc 1 ─────────────────────────────────────────────────
+                    if (!dailyStat.Warning1Sent && usedPercent >= config.Threshold1Percent)
+                    {
+                        dailyStat.Warning1Sent = true;
+                        await _context.SaveChangesAsync();
+
+                        await SendWarningNotificationAsync(user, website, config.Threshold1Message, remainingSeconds);
+
+                        result.Warning = new HeartbeatWarning
+                        {
+                            Message = config.Threshold1Message,
+                            RemainingSeconds = remainingSeconds
+                        };
+                    }
+                    // ── Mốc 2 (nếu có) ────────────────────────────────────────
+                    else if (config.Threshold2Percent.HasValue
+                             && !dailyStat.Warning2Sent
+                             && usedPercent >= config.Threshold2Percent.Value)
+                    {
+                        dailyStat.Warning2Sent = true;
+                        await _context.SaveChangesAsync();
+
+                        var msg = config.Threshold2Message ?? config.Threshold1Message;
+                        await SendWarningNotificationAsync(user, website, msg, remainingSeconds);
+
+                        result.Warning = new HeartbeatWarning
+                        {
+                            Message = msg,
+                            RemainingSeconds = remainingSeconds
+                        };
+                    }
+                }
+
+                result.LimitExceeded = exceeded;
+
+                _logger.LogDebug(
+                    "Heartbeat: child={ChildId}, domain={Domain}, used={UsedPercent:F1}%, exceeded={Exceeded}",
+                    user.Id, domain, usedPercent, exceeded);
+            }
+
+            return result;
         }
-        else
+        catch (Exception ex)
         {
-            dailyStat.TotalSeconds += 30;
-            dailyStat.RequestCount += 1;
-            dailyStat.LastUpdated = DateTime.UtcNow;
+            _logger.LogError(ex, "Error updating heartbeat");
+            return result;
         }
-
-        await _context.SaveChangesAsync();
-
-        // ✅ Kiểm tra có vượt giới hạn không
-        var website = await _context.AllowedWebsites
-            .FirstOrDefaultAsync(w => w.Id == allowedWebsiteId.Value);
-
-        if (website?.TimeLimitMinutes != null)
-        {
-            bool exceeded = dailyStat.TotalSeconds >= (website.TimeLimitMinutes * 60);
-            _logger.LogDebug("Heartbeat: child={ChildId}, domain={Domain}, seconds={Seconds}, limit={Limit}, exceeded={Exceeded}",
-                user.Id, domain, dailyStat.TotalSeconds, website.TimeLimitMinutes * 60, exceeded);
-            return exceeded;
-        }
-
-        return false;
     }
-    catch (Exception ex)
+
+    private async Task SendWarningNotificationAsync(User child, AllowedWebsite website, string customMessage, int remainingSeconds)
     {
-        _logger.LogError(ex, "Error updating heartbeat");
-        return false;
+        var guardians = await _context.GuardianChildRelationships
+            .Where(r => r.ChildId == child.Id)
+            .Select(r => r.GuardianId)
+            .ToListAsync();
+
+        if (!guardians.Any()) return;
+
+        string remainingText = remainingSeconds >= 60
+            ? $"{remainingSeconds / 60} phút"
+            : $"{remainingSeconds} giây";
+
+        foreach (var guardianId in guardians)
+        {
+            var notification = new Notification
+            {
+                GuardianId = guardianId,
+                ChildId = child.Id,
+                Title = $"⏰ Cảnh báo thời gian — {website.Domain}",
+                Message = $"[{child.FullName}] {customMessage} (Còn lại: {remainingText})",
+                Type = NotificationType.Warning,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            await _hubContext.Clients.Group($"guardian_{guardianId}").SendAsync("TimeWarning", new
+            {
+                childId = child.Id,
+                childName = child.FullName,
+                domain = website.Domain,
+                message = customMessage,
+                remainingSeconds = remainingSeconds,
+                notificationId = notification.Id
+            });
+        }
     }
-}
 
     public async Task<bool> ToggleFilterAsync(int childId, bool enabled, int requestingGuardianId)
     {
         try
         {
-            // Check if guardian can manage this child
             var relationship = await _context.GuardianChildRelationships
                 .FirstOrDefaultAsync(r => r.GuardianId == requestingGuardianId && r.ChildId == childId);
 
             if (relationship == null)
             {
-                _logger.LogWarning("Guardian {GuardianId} not allowed to manage child {ChildId}", 
+                _logger.LogWarning("Guardian {GuardianId} not allowed to manage child {ChildId}",
                     requestingGuardianId, childId);
                 return false;
             }
@@ -248,43 +363,113 @@ public class ExtensionService : IExtensionService
         }
     }
 
-    public async Task UpdateExtensionPingAsync(string googleId)
-{
-    try
+    // ── Helper nội bộ: update last_seen (gọi từ heartbeat) ──────────────────
+    private async Task UpdateExtensionLastSeenAsync(int userId)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
-        if (user == null) return;
-
-        var status = await _context.UserOnlineStatuses
-            .FirstOrDefaultAsync(o => o.UserId == user.Id);
-
-        if (status == null)
+        try
         {
-            status = new UserOnlineStatus
+            var status = await _context.UserOnlineStatuses
+                .FirstOrDefaultAsync(o => o.UserId == userId);
+
+            if (status == null)
             {
-                UserId = user.Id,
-                IsOnline = true,
-                LastSeenAt = DateTime.UtcNow,
-                ExtensionLastSeen = DateTime.UtcNow,
-                ExtensionActive = true
-            };
-            _context.UserOnlineStatuses.Add(status);
+                _context.UserOnlineStatuses.Add(new UserOnlineStatus
+                {
+                    UserId = userId,
+                    IsOnline = true,
+                    LastSeenAt = DateTime.UtcNow,
+                    ExtensionLastSeen = DateTime.UtcNow,
+                    ExtensionActive = true
+                });
+            }
+            else
+            {
+                status.ExtensionLastSeen = DateTime.UtcNow;
+                status.ExtensionActive = true;
+                status.LastSeenAt = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync();
         }
-        else
+        catch (Exception ex)
         {
-            status.ExtensionLastSeen = DateTime.UtcNow;
-            status.ExtensionActive = true;
-            status.LastSeenAt = DateTime.UtcNow;
+            _logger.LogError(ex, "Error updating extension last seen for userId {UserId}", userId);
         }
-
-        await _context.SaveChangesAsync();
     }
-    catch (Exception ex)
+
+
+    /// <summary>
+    /// Đánh dấu warning đã gửi trong DB khi precise alarm fires client-side.
+    /// Ngăn heartbeat tiếp theo gửi duplicate notification.
+    /// </summary>
+    // Alias dùng cho endpoint /warning-shown (cùng logic với MarkWarningSentAsync)
+    public async Task MarkWarningShownAsync(string googleId, int allowedWebsiteId, int warningIndex)
+        => await MarkWarningSentAsync(googleId, allowedWebsiteId, warningIndex);
+
+    public async Task MarkWarningSentAsync(string googleId, int allowedWebsiteId, int warningNumber)
     {
-        _logger.LogError(ex, "Error updating extension ping");
-    }
-}
+        try
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+            if (user == null) return;
 
-    
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var stat = await _context.DailyUsageStats
+                .FirstOrDefaultAsync(d =>
+                    d.ChildId == user.Id &&
+                    d.AllowedWebsiteId == allowedWebsiteId &&
+                    d.UsageDate == today);
+
+            if (stat == null) return;
+
+            if (warningNumber == 1) stat.Warning1Sent = true;
+            else if (warningNumber == 2) stat.Warning2Sent = true;
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Warning{N} marked sent: child={ChildId}, websiteId={WebsiteId}",
+                warningNumber, user.Id, allowedWebsiteId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error marking warning sent");
+        }
+    }
+
+    public async Task UpdateExtensionPingAsync(string googleId)
+    {
+        try
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+            if (user == null) return;
+
+            var status = await _context.UserOnlineStatuses
+                .FirstOrDefaultAsync(o => o.UserId == user.Id);
+
+            if (status == null)
+            {
+                status = new UserOnlineStatus
+                {
+                    UserId = user.Id,
+                    IsOnline = true,
+                    LastSeenAt = DateTime.UtcNow,
+                    ExtensionLastSeen = DateTime.UtcNow,
+                    ExtensionActive = true
+                };
+                _context.UserOnlineStatuses.Add(status);
+            }
+            else
+            {
+                status.ExtensionLastSeen = DateTime.UtcNow;
+                status.ExtensionActive = true;
+                status.LastSeenAt = DateTime.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating extension ping");
+        }
+    }
 }

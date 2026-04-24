@@ -38,20 +38,13 @@ public class ExtensionController : ControllerBase
     public async Task<ActionResult<ExtensionCheckResponse>> CheckAccess([FromQuery] string? domain)
     {
         if (string.IsNullOrWhiteSpace(domain))
-        {
             return BadRequest(new { error = "Domain is required" });
-        }
 
-        // Get token from header
         var authHeader = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-        {
             return Unauthorized(new { error = "Missing or invalid authorization header" });
-        }
 
         var token = authHeader.Substring("Bearer ".Length);
-
-        // Verify token with Google
         var (success, googleId, email, fullName) = await _googleTokenService.VerifyTokenAsync(token);
         if (!success)
         {
@@ -59,7 +52,6 @@ public class ExtensionController : ControllerBase
             return Unauthorized(new { error = "Invalid Google token" });
         }
 
-        // Check access
         var result = await _extensionService.CheckAccessAsync(googleId, domain);
         return Ok(result);
     }
@@ -72,16 +64,11 @@ public class ExtensionController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<ExtensionConfigResponse>> GetConfig()
     {
-        // Get token from header
         var authHeader = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-        {
             return Unauthorized(new { error = "Missing or invalid authorization header" });
-        }
 
         var token = authHeader.Substring("Bearer ".Length);
-
-        // Verify token with Google
         var (success, googleId, email, fullName) = await _googleTokenService.VerifyTokenAsync(token);
         if (!success)
         {
@@ -89,39 +76,30 @@ public class ExtensionController : ControllerBase
             return Unauthorized(new { error = "Invalid Google token" });
         }
 
-        // Get config
         var config = await _extensionService.GetConfigAsync(googleId);
         if (config == null)
-        {
             return NotFound(new { error = "Child account not found or not active" });
-        }
 
         return Ok(config);
     }
 
     /// <summary>
     /// POST /api/extension/heartbeat
-    /// Extension sends heartbeat every 30 seconds to track time
+    /// Extension sends heartbeat every 30 seconds to track time.
+    /// Response includes limitExceeded and optional warning for child notification.
     /// </summary>
     [HttpPost("heartbeat")]
     [AllowAnonymous]
     public async Task<ActionResult> SendHeartbeat([FromBody] HeartbeatRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Domain))
-        {
             return BadRequest(new { error = "Domain is required" });
-        }
 
-        // Get token from header
         var authHeader = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-        {
             return Unauthorized(new { error = "Missing or invalid authorization header" });
-        }
 
         var token = authHeader.Substring("Bearer ".Length);
-
-        // Verify token with Google
         var (success, googleId, email, fullName) = await _googleTokenService.VerifyTokenAsync(token);
         if (!success)
         {
@@ -129,38 +107,87 @@ public class ExtensionController : ControllerBase
             return Unauthorized(new { error = "Invalid Google token" });
         }
 
-        // Update heartbeat
-       bool limitExceeded = await _extensionService.UpdateHeartbeatAsync(
-    googleId, request.Domain, request.AllowedWebsiteId);
+        // ── Nhận HeartbeatResult thay vì bool ────────────────────────────────
+        var result = await _extensionService.UpdateHeartbeatAsync(
+            googleId, request.Domain, request.AllowedWebsiteId);
 
-return Ok(new { success = true, limitExceeded });
-        
+        return Ok(new
+        {
+            success       = true,
+            limitExceeded = result.LimitExceeded,
+
+            // warning != null → warning kích hoạt ngay heartbeat này (hiện notification ngay)
+            warning = result.Warning == null ? null : new
+            {
+                message          = result.Warning.Message,
+                remainingSeconds = result.Warning.RemainingSeconds
+            },
+
+            // schedule → extension đặt alarm chính xác, không phụ thuộc heartbeat 30s
+            schedule = new
+            {
+                secondsUntilWarning1 = result.SecondsUntilWarning1,
+                warningMessage1      = result.WarningMessage1,
+                secondsUntilWarning2 = result.SecondsUntilWarning2,
+                warningMessage2      = result.WarningMessage2,
+                secondsUntilBlock    = result.SecondsUntilBlock
+            }
+        });
     }
 
+    /// <summary>
+    /// POST /api/extension/ping
+    /// Extension pings every 30 seconds to signal it's alive
+    /// </summary>
+    [HttpPost("ping")]
+    [AllowAnonymous]
+    public async Task<ActionResult> Ping()
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized();
 
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success) return Unauthorized();
 
-    
+        await _extensionService.UpdateExtensionPingAsync(googleId);
+        return Ok(new { success = true });
+    }
 
-   /// <summary>
-/// POST /api/extension/ping
-/// Extension pings every 10 seconds to signal it's alive
-/// </summary>
-[HttpPost("ping")]
+     [HttpPost("warning-ack")]
+    [AllowAnonymous]
+    public async Task<ActionResult> WarningAck(
+        [FromQuery] int allowedWebsiteId,
+        [FromQuery] int warningNumber)
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized();
+ 
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success) return Unauthorized();
+ 
+        await _extensionService.MarkWarningSentAsync(googleId, allowedWebsiteId, warningNumber);
+        return Ok(new { success = true });
+    }
+
+    [HttpPost("warning-shown")]
 [AllowAnonymous]
-public async Task<ActionResult> Ping()
+public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest request)
 {
     var authHeader = Request.Headers.Authorization.ToString();
     if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         return Unauthorized();
-
+ 
     var token = authHeader.Substring("Bearer ".Length);
     var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
     if (!success) return Unauthorized();
-
-    await _extensionService.UpdateExtensionPingAsync(googleId);
+ 
+    await _extensionService.MarkWarningShownAsync(googleId, request.AllowedWebsiteId, request.WarningIndex);
     return Ok(new { success = true });
 }
-   
 }
 
 public class HeartbeatRequest
@@ -173,4 +200,9 @@ public class FilterToggleRequest
 {
     public bool FilterEnabled { get; set; }
 }
- 
+
+public class WarningShownRequest
+{
+    public int AllowedWebsiteId { get; set; }
+    public int WarningIndex { get; set; } // 1 hoặc 2
+}
