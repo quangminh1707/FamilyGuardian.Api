@@ -1,0 +1,15 @@
+# Ignore config
+appsettings.Development.json
+
+# Build files
+bin/
+obj/
+code agent/
+# Logs
+logs/
+*.log
+
+# VS / system
+.vs/
+*.user
+*.suo

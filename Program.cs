@@ -28,7 +28,10 @@ try
           .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day));
 
     // ─── MySQL + EF Core ────────────────────────────────────────────
-    var connStr = builder.Configuration.GetConnectionString("Default")!;
+    // var connStr = builder.Configuration.GetConnectionString("Default")!; //nếu 2 đoạn dưới lỗi thì dùng đoạn này
+    var connStr = builder.Configuration.GetConnectionString("Default")
+             ?? builder.Configuration["ConnectionStrings__Default"];
+
     builder.Services.AddDbContext<AppDbContext>(opt =>
     {
         opt.UseMySql(connStr, ServerVersion.AutoDetect(connStr),
@@ -132,7 +135,7 @@ builder.Services.AddHostedService<ExtensionMonitorService>();
                     "http://localhost:5173",
                     "http://localhost:3000",
                     "http://localhost:5174",
-                    "http://localhost:5175")
+                    "http://localhost:5175","https://family-guardian-frontend.vercel.app")
                     
                   .AllowAnyHeader()
                   .AllowAnyMethod()
@@ -205,6 +208,12 @@ builder.Services.AddHostedService<ExtensionMonitorService>();
     app.MapHub<NotificationHub>("/hubs/notifications");
 
     Log.Information("Family Guardian API starting...");
+    
+    if (builder.Environment.IsProduction())
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
     app.Run();
 }
 catch (Exception ex)
