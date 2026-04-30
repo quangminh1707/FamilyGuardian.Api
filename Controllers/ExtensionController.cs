@@ -131,7 +131,16 @@ public class ExtensionController : ControllerBase
                 secondsUntilWarning2 = result.SecondsUntilWarning2,
                 warningMessage2      = result.WarningMessage2,
                 secondsUntilBlock    = result.SecondsUntilBlock
-            }
+            },
+
+            // timeInfo → extension hiển thị overlay thông tin thời gian
+            timeInfo = (result.TimeWindowDisplay != null || result.MinutesRemainingToday != null) ? new
+            {
+                mode               = result.TimeWindowDisplay != null ? "timeWindow" : "minuteLimit",
+                timeWindowDisplay  = result.TimeWindowDisplay,
+                minutesUntilWindowEnd = result.MinutesUntilWindowEnd,
+                minutesRemainingToday = result.MinutesRemainingToday
+            } : (object?)null
         });
     }
 
@@ -188,6 +197,28 @@ public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest 
     await _extensionService.MarkWarningShownAsync(googleId, request.AllowedWebsiteId, request.WarningIndex);
     return Ok(new { success = true });
 }
+
+    /// <summary>
+    /// POST /api/extension/tw-warning-ack
+    /// Đánh dấu cảnh báo khung giờ đã gửi
+    /// </summary>
+    [HttpPost("tw-warning-ack")]
+    [AllowAnonymous]
+    public async Task<ActionResult> TwWarningAck(
+        [FromQuery] int allowedWebsiteId,
+        [FromQuery] int warningNumber)
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized();
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success) return Unauthorized();
+
+        await _extensionService.MarkTimeWindowWarningSentAsync(googleId, allowedWebsiteId, warningNumber);
+        return Ok(new { success = true });
+    }
 }
 
 public class HeartbeatRequest

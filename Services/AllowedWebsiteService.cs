@@ -107,9 +107,31 @@ public class AllowedWebsiteService : IAllowedWebsiteService
             .FirstOrDefaultAsync(w => w.Id == websiteId && w.ChildId == childId)
             ?? throw new KeyNotFoundException("Không tìm thấy website.");
 
-        website.TimeLimitMinutes = request.TimeLimitMinutes;
-        website.AllowedStartTime = !string.IsNullOrEmpty(request.AllowedStartTime) ? TimeOnly.Parse(request.AllowedStartTime) : null;
-        website.AllowedEndTime = !string.IsNullOrEmpty(request.AllowedEndTime) ? TimeOnly.Parse(request.AllowedEndTime) : null;
+        // Logic chuyển đổi: chỉ 1 trong 2 tính năng được kích hoạt tại cùng thời điểm
+        if (request.TimeLimitMinutes.HasValue)
+        {
+            // Dùng giới hạn phút → xóa khung giờ cũ
+            website.TimeLimitMinutes = request.TimeLimitMinutes;
+            website.AllowedStartTime = null;
+            website.AllowedEndTime = null;
+        }
+        else if (!string.IsNullOrEmpty(request.AllowedStartTime))
+        {
+            // Dùng khung giờ → xóa giới hạn phút cũ
+            website.AllowedStartTime = TimeOnly.Parse(request.AllowedStartTime);
+            website.AllowedEndTime = !string.IsNullOrEmpty(request.AllowedEndTime)
+                ? TimeOnly.Parse(request.AllowedEndTime)
+                : null;
+            website.TimeLimitMinutes = null;
+        }
+        else
+        {
+            // Cả 2 đều null → không giới hạn
+            website.TimeLimitMinutes = null;
+            website.AllowedStartTime = null;
+            website.AllowedEndTime = null;
+        }
+
         website.IsActive = request.IsActive;
         website.UpdatedAt = DateTime.UtcNow;
 

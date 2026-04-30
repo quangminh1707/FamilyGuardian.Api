@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
  
     public DbSet<WebSession> WebSessions => Set<WebSession>();
     public DbSet<WebsiteWarningConfig> WebsiteWarningConfigs => Set<WebsiteWarningConfig>();
+    public DbSet<WebsiteTimeWindowWarningConfig> WebsiteTimeWindowWarningConfigs => Set<WebsiteTimeWindowWarningConfig>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────
     public DbSet<ChildSpResult> ChildSpResults => Set<ChildSpResult>();
@@ -122,6 +123,13 @@ public class AppDbContext : DbContext
             .HasIndex(s => new { s.ChildId, s.StartedAt });
         mb.Entity<WebSession>()
             .HasIndex(s => new { s.EndedAt, s.LastActivityAt }); // cho CloseIdleSessionsJob
+
+        // WebsiteTimeWindowWarningConfig ↔ AllowedWebsite
+        mb.Entity<WebsiteTimeWindowWarningConfig>()
+            .HasOne(c => c.AllowedWebsite).WithMany()
+            .HasForeignKey(c => c.AllowedWebsiteId).OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<WebsiteTimeWindowWarningConfig>()
+            .HasIndex(c => c.AllowedWebsiteId).IsUnique();
 
         // ── Keyless SP result types ─────────────────────────────────────────
         mb.Entity<ChildSpResult>().HasNoKey();

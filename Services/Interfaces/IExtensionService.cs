@@ -11,4 +11,5 @@ public interface IExtensionService
     Task UpdateExtensionPingAsync(string googleId);
     Task MarkWarningSentAsync(string googleId, int allowedWebsiteId, int warningNumber);
     Task MarkWarningShownAsync(string googleId, int allowedWebsiteId, int warningIndex);
+    Task MarkTimeWindowWarningSentAsync(string googleId, int allowedWebsiteId, int warningNumber);
 }

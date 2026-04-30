@@ -17,8 +17,14 @@ public class DailyUsageStat
     public AllowedWebsite Website { get; set; } = null!;
 
     [Column("warning1_sent")]
-public bool Warning1Sent { get; set; } = false;
- 
-[Column("warning2_sent")]
-public bool Warning2Sent { get; set; } = false;
+    public bool Warning1Sent { get; set; } = false;
+
+    [Column("warning2_sent")]
+    public bool Warning2Sent { get; set; } = false;
+
+    [Column("tw_warning1_sent")]
+    public bool TwWarning1Sent { get; set; } = false;
+
+    [Column("tw_warning2_sent")]
+    public bool TwWarning2Sent { get; set; } = false;
 }

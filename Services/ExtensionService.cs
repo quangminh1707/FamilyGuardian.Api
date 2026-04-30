@@ -46,6 +46,14 @@ public class HeartbeatResult
 
     /// <summary>Giây còn lại đến khi bị chặn</summary>
     public int? SecondsUntilBlock { get; set; }
+
+    // ── Time Info (mới) ──────────────────────────────────────────────────────
+    /// <summary>"10:00 → 12:00" — extension hiển thị overlay</summary>
+    public string? TimeWindowDisplay { get; set; }
+    /// <summary>Phút còn lại đến cuối khung giờ</summary>
+    public int? MinutesUntilWindowEnd { get; set; }
+    /// <summary>Phút còn lại hôm nay (giới hạn phút)</summary>
+    public int? MinutesRemainingToday { get; set; }
 }
 
 public class HeartbeatWarning
@@ -251,10 +259,73 @@ public class ExtensionService : IExtensionService
                 }
 
                 result.LimitExceeded = exceeded;
+                result.MinutesRemainingToday = (int)Math.Max(0, Math.Ceiling((double)(limitSeconds - dailyStat.TotalSeconds) / 60));
 
                 _logger.LogDebug(
                     "Heartbeat: child={ChildId}, domain={Domain}, used={UsedPercent:F1}%, exceeded={Exceeded}",
                     user.Id, domain, usedPercent, exceeded);
+            }
+
+            // ── Time Window Warning Block (MỚI) ──────────────────────────────
+            if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
+            {
+                var nowTime = TimeOnly.FromDateTime(DateTime.Now);
+                var endTime = website.AllowedEndTime.Value;
+
+                // Tính phút còn lại đến cuối khung giờ
+                double minutesUntilEndRaw = (endTime.ToTimeSpan() - nowTime.ToTimeSpan()).TotalMinutes;
+                // Nếu đã qua 0h (end < now do endTime qua ngày), điều chỉnh
+                if (minutesUntilEndRaw < -600) minutesUntilEndRaw += 1440;
+
+                int minutesUntilEnd = (int)Math.Ceiling(minutesUntilEndRaw);
+
+                // Gán TimeWindowDisplay cho overlay
+                result.TimeWindowDisplay = $"{website.AllowedStartTime.Value:HH\\:mm} → {endTime:HH\\:mm}";
+
+                if (minutesUntilEnd >= 0)
+                {
+                    result.MinutesUntilWindowEnd = minutesUntilEnd;
+
+                    var twConfig = await _context.WebsiteTimeWindowWarningConfigs
+                        .FirstOrDefaultAsync(c => c.AllowedWebsiteId == website.Id && c.IsActive);
+
+                    if (twConfig != null)
+                    {
+                        // Mốc 1
+                        if (!dailyStat.TwWarning1Sent && minutesUntilEnd <= twConfig.WarnMinutesBefore1)
+                        {
+                            dailyStat.TwWarning1Sent = true;
+                            await _context.SaveChangesAsync();
+
+                            int remainingSeconds = minutesUntilEnd * 60;
+                            await SendWarningNotificationAsync(user, website, twConfig.Message1, remainingSeconds);
+
+                            result.Warning = new HeartbeatWarning
+                            {
+                                Message = twConfig.Message1,
+                                RemainingSeconds = remainingSeconds
+                            };
+                        }
+                        // Mốc 2 (nếu có)
+                        else if (twConfig.WarnMinutesBefore2.HasValue
+                                 && !dailyStat.TwWarning2Sent
+                                 && minutesUntilEnd <= twConfig.WarnMinutesBefore2.Value)
+                        {
+                            dailyStat.TwWarning2Sent = true;
+                            await _context.SaveChangesAsync();
+
+                            int remainingSeconds = minutesUntilEnd * 60;
+                            var msg2 = twConfig.Message2 ?? twConfig.Message1;
+                            await SendWarningNotificationAsync(user, website, msg2, remainingSeconds);
+
+                            result.Warning = new HeartbeatWarning
+                            {
+                                Message = msg2,
+                                RemainingSeconds = remainingSeconds
+                            };
+                        }
+                    }
+                }
             }
 
             return result;
@@ -432,6 +503,36 @@ public class ExtensionService : IExtensionService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error marking warning sent");
+        }
+    }
+
+    public async Task MarkTimeWindowWarningSentAsync(string googleId, int allowedWebsiteId, int warningNumber)
+    {
+        try
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+            if (user == null) return;
+
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var stat = await _context.DailyUsageStats
+                .FirstOrDefaultAsync(d =>
+                    d.ChildId == user.Id &&
+                    d.AllowedWebsiteId == allowedWebsiteId &&
+                    d.UsageDate == today);
+
+            if (stat == null) return;
+
+            if (warningNumber == 1) stat.TwWarning1Sent = true;
+            else if (warningNumber == 2) stat.TwWarning2Sent = true;
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("TwWarning{N} marked sent: child={ChildId}, websiteId={WebsiteId}",
+                warningNumber, user.Id, allowedWebsiteId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error marking time window warning sent");
         }
     }
 
