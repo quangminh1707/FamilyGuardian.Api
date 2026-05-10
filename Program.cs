@@ -123,6 +123,7 @@ try
 
     // ─── Extension Services ───────────────────────────────────────────
     builder.Services.AddScoped<IExtensionService, ExtensionService>();
+    builder.Services.AddScoped<IAccessRequestService, AccessRequestService>();
 
     // ─── Extension Monitor Background Service ────────────────────
 builder.Services.AddHostedService<ExtensionMonitorService>();

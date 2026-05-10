@@ -10,6 +10,7 @@ public class User
     public UserRole Role { get; set; } = UserRole.Guardian;
     public bool IsActive { get; set; } = true;
     public bool FilterEnabled { get; set; } = false;  // NEW: Web filter toggle for child accounts
+    public bool InternetPaused { get; set; } = false;  // Feature 3: Kill Switch
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
@@ -22,6 +23,8 @@ public class User
     public ICollection<WebAccessLog> AccessLogs { get; set; } = [];
     public ICollection<Notification> SentNotifications { get; set; } = [];
     public ICollection<Notification> ReceivedNotifications { get; set; } = [];
+    public ICollection<AccessRequest> AccessRequestsAsChild { get; set; } = [];
+    public ICollection<AccessRequest> AccessRequestsAsGuardian { get; set; } = [];
 }
 
 public enum UserRole { Admin, Guardian, Child }

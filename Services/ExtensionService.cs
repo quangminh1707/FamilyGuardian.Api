@@ -84,6 +84,20 @@ public class ExtensionService : IExtensionService
         {
             domain = DomainNormalizer.Normalize(domain);
 
+            // Feature 3: Kill Switch — check internet_paused TRƯỚC khi gọi SP
+            var user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
+            if (user != null && user.InternetPaused)
+            {
+                return new ExtensionCheckResponse
+                {
+                    Allowed = false,
+                    Reason = "Internet đang bị tạm dừng bởi phụ huynh",
+                    Domain = domain
+                };
+            }
+
             var result = await _context.CheckWebAccessSpResults.FromSqlInterpolated(
                 $"CALL sp_ExtensionCheckAccess({googleId}, {domain})"
             ).ToListAsync();
@@ -172,6 +186,12 @@ public class ExtensionService : IExtensionService
                 .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
 
             if (user == null) return result;
+
+            // Feature 3: Kill Switch — check internet_paused TRƯỚC mọi logic
+            if (user.InternetPaused)
+            {
+                return new HeartbeatResult { LimitExceeded = true };
+            }
 
             // ── Gộp ping vào heartbeat: update extension_last_seen ────────────
             // Extension gọi heartbeat mỗi 10s, không cần alarm ping riêng nữa.

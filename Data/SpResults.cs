@@ -14,6 +14,7 @@ public class ChildSpResult
     [Column("is_active")]             public bool IsActive { get; set; }
     [Column("created_at")]            public DateTime CreatedAt { get; set; }
      [Column("filter_enabled")]        public bool FilterEnabled { get; set; }
+    [Column("internet_paused")]        public bool InternetPaused { get; set; }
     [Column("is_online")]             public bool IsOnline { get; set; }
     [Column("last_seen_at")]          public DateTime? LastSeenAt { get; set; }
     [Column("ip_address")]            public string? IpAddress { get; set; }

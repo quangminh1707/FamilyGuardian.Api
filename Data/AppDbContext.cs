@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<WebSession> WebSessions => Set<WebSession>();
     public DbSet<WebsiteWarningConfig> WebsiteWarningConfigs => Set<WebsiteWarningConfig>();
     public DbSet<WebsiteTimeWindowWarningConfig> WebsiteTimeWindowWarningConfigs => Set<WebsiteTimeWindowWarningConfig>();
+    public DbSet<AccessRequest> AccessRequests => Set<AccessRequest>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────
     public DbSet<ChildSpResult> ChildSpResults => Set<ChildSpResult>();
@@ -130,6 +131,18 @@ public class AppDbContext : DbContext
             .HasForeignKey(c => c.AllowedWebsiteId).OnDelete(DeleteBehavior.Cascade);
         mb.Entity<WebsiteTimeWindowWarningConfig>()
             .HasIndex(c => c.AllowedWebsiteId).IsUnique();
+
+        // AccessRequest
+        mb.Entity<AccessRequest>(entity =>
+        {
+            entity.ToTable("access_requests");
+            entity.HasIndex(e => new { e.GuardianId, e.Status });
+            entity.HasIndex(e => new { e.ChildId, e.Domain });
+            entity.HasOne(e => e.Child).WithMany(u => u.AccessRequestsAsChild)
+                .HasForeignKey(e => e.ChildId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Guardian).WithMany(u => u.AccessRequestsAsGuardian)
+                .HasForeignKey(e => e.GuardianId).OnDelete(DeleteBehavior.Cascade);
+        });
 
         // ── Keyless SP result types ─────────────────────────────────────────
         mb.Entity<ChildSpResult>().HasNoKey();

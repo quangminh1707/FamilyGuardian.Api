@@ -33,6 +33,7 @@ public class ChildService : IChildService
             ActiveWebsitesCount = r.ActiveWebsitesCount,
             TodayTotalSeconds = r.TodayTotalSeconds,
              FilterEnabled = r.FilterEnabled,
+            InternetPaused = r.InternetPaused,
         }).ToList();
     }
 
@@ -67,6 +68,7 @@ public class ChildService : IChildService
             IpAddress = child.OnlineStatus?.IpAddress,
             AllowedWebsites = websites,
             FilterEnabled = child.FilterEnabled,  // ✅ THÊM DÒNG NÀY
+            InternetPaused = child.InternetPaused,
             TodayTotalSeconds = websites.Sum(w => w.TodaySeconds)
         };
     }

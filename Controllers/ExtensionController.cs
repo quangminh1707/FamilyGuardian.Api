@@ -3,6 +3,7 @@ using FamilyGuardian.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FamilyGuardian.Api.Services.Interfaces;
+using FamilyGuardian.Api.Models.DTOs;
 using System.Security.Claims;
 
 namespace FamilyGuardian.Api.Controllers;
@@ -17,15 +18,18 @@ public class ExtensionController : ControllerBase
 {
     private readonly IExtensionService _extensionService;
     private readonly IGoogleTokenService _googleTokenService;
+    private readonly IAccessRequestService _accessRequestService;
     private readonly ILogger<ExtensionController> _logger;
 
     public ExtensionController(
         IExtensionService extensionService,
         IGoogleTokenService googleTokenService,
+        IAccessRequestService accessRequestService,
         ILogger<ExtensionController> logger)
     {
         _extensionService = extensionService;
         _googleTokenService = googleTokenService;
+        _accessRequestService = accessRequestService;
         _logger = logger;
     }
 
@@ -218,6 +222,33 @@ public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest 
 
         await _extensionService.MarkTimeWindowWarningSentAsync(googleId, allowedWebsiteId, warningNumber);
         return Ok(new { success = true });
+    }
+
+    /// <summary>
+    /// POST /api/extension/request-access
+    /// Child sends a request to guardian(s) for website access
+    /// </summary>
+    [HttpPost("request-access")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RequestAccess([FromBody] RequestAccessDto dto)
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized(new { error = "Missing or invalid authorization header" });
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success)
+            return Unauthorized(new { error = "Invalid Google token" });
+
+        if (string.IsNullOrEmpty(dto.Domain))
+            return BadRequest(new { message = "Domain không được để trống" });
+
+        var (reqSuccess, message) = await _accessRequestService.SubmitRequestAsync(
+            googleId, dto.Domain, dto.FullUrl);
+
+        if (!reqSuccess) return BadRequest(new { message });
+        return Ok(new { message });
     }
 }
 

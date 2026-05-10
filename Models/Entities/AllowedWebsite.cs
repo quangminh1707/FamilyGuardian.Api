@@ -20,6 +20,7 @@ public class AllowedWebsite
     public int AddedBy { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? TempExpiresAt { get; set; }  // Feature 2: Temp access expiration
 
     public User Child { get; set; } = null!;
     public User Guardian { get; set; } = null!;

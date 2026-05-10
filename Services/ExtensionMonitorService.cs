@@ -29,6 +29,9 @@ public class ExtensionMonitorService : BackgroundService
             try { await CheckExtensions(); }
             catch (Exception ex) { _logger.LogError(ex, "Error in ExtensionMonitorService"); }
 
+            try { await CleanupExpiredTempAccess(); }
+            catch (Exception ex) { _logger.LogError(ex, "Error cleaning up temp access"); }
+
             await Task.Delay(10_000, stoppingToken); // Kiểm tra mỗi 10 giây
         }
     }
@@ -93,6 +96,29 @@ public class ExtensionMonitorService : BackgroundService
                         notificationId = notification.Id
                     });
             }
+        }
+    }
+
+    // ── Feature 2: Cleanup temp access đã hết hạn ──────────────────────────
+    private async Task CleanupExpiredTempAccess()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var expiredTempAccess = await db.AllowedWebsites
+            .Where(w => w.TempExpiresAt != null && w.TempExpiresAt < DateTime.Now)
+            .ToListAsync();
+
+        foreach (var w in expiredTempAccess)
+        {
+            w.IsActive = false;
+            w.TempExpiresAt = null;
+        }
+
+        if (expiredTempAccess.Any())
+        {
+            await db.SaveChangesAsync();
+            _logger.LogInformation("Cleaned up {Count} expired temp access entries", expiredTempAccess.Count);
         }
     }
 }
