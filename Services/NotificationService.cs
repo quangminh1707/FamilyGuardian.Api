@@ -21,30 +21,22 @@ public class NotificationService : INotificationService
         _logger = logger;
     }
 
-    public async Task<List<NotificationDto>> GetUnreadNotificationsAsync(int userId)
+    private IQueryable<Notification> BuildNotificationQuery(int userId, string filter)
     {
-        return await _db.Notifications
-            .Where(n => n.GuardianId == userId  // ✅ Guardian xem thông báo của mình
-                && !n.IsRead
-                && (n.ScheduledAt == null || n.ScheduledAt <= DateTime.UtcNow))
-            .OrderByDescending(n => n.CreatedAt)
-            .Select(n => new NotificationDto
-            {
-                Id = n.Id,
-                Title = n.Title,
-                Message = n.Message,
-                Type = n.Type.ToString().ToLower(),
-                IsRead = n.IsRead,
-                ScheduledAt = n.ScheduledAt,
-                SentAt = n.SentAt,
-                CreatedAt = n.CreatedAt
-            }).ToListAsync();
+        var query = _db.Notifications.Where(n => n.GuardianId == userId);
+
+        filter = string.IsNullOrWhiteSpace(filter) ? "all" : filter.Trim().ToLowerInvariant();
+        if (filter == "unread")
+            query = query.Where(n => !n.IsRead);
+        else if (filter == "read")
+            query = query.Where(n => n.IsRead);
+
+        return query;
     }
 
-    public async Task<List<NotificationDto>> GetNotificationHistoryAsync(int userId, int page, int pageSize)
+    public async Task<List<NotificationDto>> GetNotificationsAsync(int userId, string filter, int page, int pageSize)
     {
-        return await _db.Notifications
-            .Where(n => n.GuardianId == userId)  // ✅ Guardian xem lịch sử thông báo của mình
+        return await BuildNotificationQuery(userId, filter)
             .OrderByDescending(n => n.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -61,6 +53,31 @@ public class NotificationService : INotificationService
             }).ToListAsync();
     }
 
+    public async Task<List<NotificationDto>> GetUnreadNotificationsAsync(int userId)
+    {
+        return await _db.Notifications
+            .Where(n => n.GuardianId == userId
+                && !n.IsRead
+                && (n.ScheduledAt == null || n.ScheduledAt <= DateTime.Now))
+            .OrderByDescending(n => n.CreatedAt)
+            .Select(n => new NotificationDto
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Message = n.Message,
+                Type = n.Type.ToString().ToLower(),
+                IsRead = n.IsRead,
+                ScheduledAt = n.ScheduledAt,
+                SentAt = n.SentAt,
+                CreatedAt = n.CreatedAt
+            }).ToListAsync();
+    }
+
+    public async Task<List<NotificationDto>> GetNotificationHistoryAsync(int userId, int page, int pageSize)
+    {
+        return await GetNotificationsAsync(userId, "all", page, pageSize);
+    }
+
     public async Task CreateNotificationAsync(int guardianId, int childId, CreateNotificationRequest request)
     {
         var type = Enum.TryParse<NotificationType>(request.Type, true, out var t) ? t : NotificationType.Reminder;
@@ -73,12 +90,12 @@ public class NotificationService : INotificationService
             Message = request.Message,
             Type = type,
             ScheduledAt = request.ScheduledAt,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now
         };
 
-        if (notification.ScheduledAt == null || notification.ScheduledAt <= DateTime.UtcNow)
+        if (notification.ScheduledAt == null || notification.ScheduledAt <= DateTime.Now)
         {
-            notification.SentAt = DateTime.UtcNow;
+            notification.SentAt = DateTime.Now;
             _db.Notifications.Add(notification);
             await _db.SaveChangesAsync();
 
@@ -124,14 +141,14 @@ public class NotificationService : INotificationService
     public async Task SendScheduledNotificationsAsync()
     {
         var pending = await _db.Notifications
-            .Where(n => n.SentAt == null && n.ScheduledAt != null && n.ScheduledAt <= DateTime.UtcNow)
+            .Where(n => n.SentAt == null && n.ScheduledAt != null && n.ScheduledAt <= DateTime.Now)
             .ToListAsync();
 
         if (pending.Count == 0) return;
 
         foreach (var n in pending)
         {
-            n.SentAt = DateTime.UtcNow;
+            n.SentAt = DateTime.Now;
             await _hubContext.Clients.Group($"user_{n.ChildId}").SendAsync("ReceiveNotification", new NotificationDto
             {
                 Id = n.Id,

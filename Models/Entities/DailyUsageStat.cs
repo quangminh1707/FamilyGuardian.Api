@@ -10,8 +10,9 @@ public class DailyUsageStat
     public string Domain { get; set; } = null!;
     public DateOnly UsageDate { get; set; }
     public int TotalSeconds { get; set; } = 0;
+    public int BonusSeconds { get; set; } = 0;
     public int RequestCount { get; set; } = 0;
-    public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+    public DateTime LastUpdated { get; set; } = DateTime.Now;
 
     public User Child { get; set; } = null!;
     public AllowedWebsite Website { get; set; } = null!;

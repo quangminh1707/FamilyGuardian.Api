@@ -29,6 +29,18 @@ public class ExtensionConfigResponse
     public string? Email { get; set; }
 }
 
+public class BlockInfoResult
+{
+    // "internet_paused" | "time_limit_exceeded" | "not_in_whitelist"
+    public string Reason { get; set; } = "not_in_whitelist";
+    public bool DomainExistsInWhitelist { get; set; }
+    public int? CurrentLimitMinutes { get; set; }
+    public int? UsedSecondsToday { get; set; }
+    public int? RemainingSeconds { get; set; }
+    public string? AllowedStartTime { get; set; }
+    public string? AllowedEndTime { get; set; }
+}
+
 public class HeartbeatResult
 {
     public bool LimitExceeded { get; set; } = false;
@@ -174,6 +186,74 @@ public class ExtensionService : IExtensionService
     }
 
     // ── Đổi return type: bool → HeartbeatResult ──────────────────────────────
+    public async Task<BlockInfoResult> GetBlockInfoAsync(string googleId, string domain)
+    {
+        domain = DomainNormalizer.Normalize(domain);
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.GoogleId == googleId);
+        if (user == null) return new BlockInfoResult { Reason = "not_in_whitelist" };
+
+        if (user.InternetPaused)
+        {
+            return new BlockInfoResult { Reason = "internet_paused" };
+        }
+
+        var website = await _context.AllowedWebsites
+            .FirstOrDefaultAsync(w => w.ChildId == user.Id
+                                   && w.Domain == domain
+                                   && w.IsActive);
+
+        if (website == null)
+        {
+            return new BlockInfoResult
+            {
+                Reason = "not_in_whitelist",
+                DomainExistsInWhitelist = false
+            };
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var stat = await _context.DailyUsageStats
+            .FirstOrDefaultAsync(s => s.ChildId == user.Id
+                                   && s.AllowedWebsiteId == website.Id
+                                   && s.UsageDate == today);
+
+        if (website.TimeLimitMinutes.HasValue && stat != null)
+        {
+            var effectiveUsed = Math.Max(0, stat.TotalSeconds - Math.Max(0, stat.BonusSeconds));
+            var limitSeconds = website.TimeLimitMinutes.Value * 60;
+            if (effectiveUsed >= limitSeconds)
+            {
+                return new BlockInfoResult
+                {
+                    Reason = "time_limit_exceeded",
+                    DomainExistsInWhitelist = true,
+                    CurrentLimitMinutes = website.TimeLimitMinutes,
+                    UsedSecondsToday = effectiveUsed,
+                    RemainingSeconds = 0
+                };
+            }
+        }
+
+        if (website.AllowedStartTime.HasValue && website.AllowedEndTime.HasValue)
+        {
+            var now = DateTime.Now.TimeOfDay;
+            if (now < website.AllowedStartTime.Value.ToTimeSpan() || now > website.AllowedEndTime.Value.ToTimeSpan())
+            {
+                return new BlockInfoResult
+                {
+                    Reason = "time_limit_exceeded",
+                    DomainExistsInWhitelist = true,
+                    AllowedStartTime = website.AllowedStartTime.Value.ToString(@"HH\:mm"),
+                    AllowedEndTime = website.AllowedEndTime.Value.ToString(@"HH\:mm")
+                };
+            }
+        }
+
+        return new BlockInfoResult { Reason = "not_in_whitelist", DomainExistsInWhitelist = true };
+    }
+
     public async Task<HeartbeatResult> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId)
     {
         var result = new HeartbeatResult();
@@ -199,7 +279,7 @@ public class ExtensionService : IExtensionService
 
             if (!allowedWebsiteId.HasValue) return result;
 
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
             var dailyStat = await _context.DailyUsageStats
                 .FirstOrDefaultAsync(d =>
                     d.ChildId == user.Id
@@ -216,7 +296,7 @@ public class ExtensionService : IExtensionService
                     UsageDate = today,
                     TotalSeconds = 30,   // heartbeat mỗi 30s
                     RequestCount = 1,
-                    LastUpdated = DateTime.UtcNow
+                    LastUpdated = DateTime.Now
                 };
                 _context.DailyUsageStats.Add(dailyStat);
             }
@@ -224,7 +304,7 @@ public class ExtensionService : IExtensionService
             {
                 dailyStat.TotalSeconds += 30;  // heartbeat mỗi 10s
                 dailyStat.RequestCount += 1;
-                dailyStat.LastUpdated = DateTime.UtcNow;
+                dailyStat.LastUpdated = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();
@@ -235,15 +315,16 @@ public class ExtensionService : IExtensionService
             if (website?.TimeLimitMinutes != null)
             {
                 int limitSeconds = website.TimeLimitMinutes.Value * 60;
-                double usedPercent = (double)dailyStat.TotalSeconds / limitSeconds * 100;
-                bool exceeded = dailyStat.TotalSeconds >= limitSeconds;
+                int effectiveUsedSeconds = Math.Max(0, dailyStat.TotalSeconds - Math.Max(0, dailyStat.BonusSeconds));
+                double usedPercent = (double)effectiveUsedSeconds / limitSeconds * 100;
+                bool exceeded = effectiveUsedSeconds >= limitSeconds;
 
                 var config = await _context.WebsiteWarningConfigs
                     .FirstOrDefaultAsync(c => c.AllowedWebsiteId == website.Id && c.IsActive);
 
                 if (config != null)
                 {
-                    int remainingSeconds = Math.Max(0, limitSeconds - dailyStat.TotalSeconds);
+                    int remainingSeconds = Math.Max(0, limitSeconds - effectiveUsedSeconds);
 
                     // ── Mốc 1 ─────────────────────────────────────────────────
                     if (!dailyStat.Warning1Sent && usedPercent >= config.Threshold1Percent)
@@ -279,7 +360,7 @@ public class ExtensionService : IExtensionService
                 }
 
                 result.LimitExceeded = exceeded;
-                result.MinutesRemainingToday = (int)Math.Max(0, Math.Ceiling((double)(limitSeconds - dailyStat.TotalSeconds) / 60));
+                result.MinutesRemainingToday = (int)Math.Max(0, Math.Ceiling((double)(limitSeconds - effectiveUsedSeconds) / 60));
 
                 _logger.LogDebug(
                     "Heartbeat: child={ChildId}, domain={Domain}, used={UsedPercent:F1}%, exceeded={Exceeded}",
@@ -442,7 +523,7 @@ public class ExtensionService : IExtensionService
                 Domain = domain,
                 AccessResult = allowed ? AccessResult.Allowed : AccessResult.Blocked,
                 AllowedWebsiteId = websiteId,
-                SessionStart = DateTime.UtcNow
+                SessionStart = DateTime.Now
             };
 
             _context.WebAccessLogs.Add(log);
@@ -468,16 +549,16 @@ public class ExtensionService : IExtensionService
                 {
                     UserId = userId,
                     IsOnline = true,
-                    LastSeenAt = DateTime.UtcNow,
-                    ExtensionLastSeen = DateTime.UtcNow,
+                    LastSeenAt = DateTime.Now,
+                    ExtensionLastSeen = DateTime.Now,
                     ExtensionActive = true
                 });
             }
             else
             {
-                status.ExtensionLastSeen = DateTime.UtcNow;
+                status.ExtensionLastSeen = DateTime.Now;
                 status.ExtensionActive = true;
-                status.LastSeenAt = DateTime.UtcNow;
+                status.LastSeenAt = DateTime.Now;
             }
             await _context.SaveChangesAsync();
         }
@@ -504,7 +585,7 @@ public class ExtensionService : IExtensionService
                 .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
             if (user == null) return;
 
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
             var stat = await _context.DailyUsageStats
                 .FirstOrDefaultAsync(d =>
                     d.ChildId == user.Id &&
@@ -534,7 +615,7 @@ public class ExtensionService : IExtensionService
                 .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
             if (user == null) return;
 
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
             var stat = await _context.DailyUsageStats
                 .FirstOrDefaultAsync(d =>
                     d.ChildId == user.Id &&
@@ -573,17 +654,17 @@ public class ExtensionService : IExtensionService
                 {
                     UserId = user.Id,
                     IsOnline = true,
-                    LastSeenAt = DateTime.UtcNow,
-                    ExtensionLastSeen = DateTime.UtcNow,
+                    LastSeenAt = DateTime.Now,
+                    ExtensionLastSeen = DateTime.Now,
                     ExtensionActive = true
                 };
                 _context.UserOnlineStatuses.Add(status);
             }
             else
             {
-                status.ExtensionLastSeen = DateTime.UtcNow;
+                status.ExtensionLastSeen = DateTime.Now;
                 status.ExtensionActive = true;
-                status.LastSeenAt = DateTime.UtcNow;
+                status.LastSeenAt = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();

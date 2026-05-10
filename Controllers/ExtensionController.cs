@@ -245,10 +245,43 @@ public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest 
             return BadRequest(new { message = "Domain không được để trống" });
 
         var (reqSuccess, message) = await _accessRequestService.SubmitRequestAsync(
-            googleId, dto.Domain, dto.FullUrl);
+            googleId,
+            dto.Domain,
+            dto.FullUrl,
+            dto.Reason,
+            dto.RequestedDurationMinutes,
+            dto.RequestedStartTime,
+            dto.RequestedEndTime);
 
         if (!reqSuccess) return BadRequest(new { message });
         return Ok(new { message });
+    }
+
+    /// <summary>
+    /// GET /api/extension/block-info?domain=youtube.com
+    /// Extension calls this to understand why a page is blocked.
+    /// </summary>
+    [HttpGet("block-info")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetBlockInfo([FromQuery] string domain)
+    {
+        if (string.IsNullOrWhiteSpace(domain))
+            return BadRequest(new { error = "Domain is required" });
+
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized(new { error = "Missing or invalid authorization header" });
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success)
+        {
+            _logger.LogWarning("Failed to verify Google token for block-info");
+            return Unauthorized(new { error = "Invalid Google token" });
+        }
+
+        var result = await _extensionService.GetBlockInfoAsync(googleId, domain);
+        return Ok(result);
     }
 }
 

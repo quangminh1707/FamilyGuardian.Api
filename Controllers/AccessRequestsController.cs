@@ -18,12 +18,12 @@ public class AccessRequestsController : ControllerBase
         _service = service;
     }
 
-    // GET /api/access-requests
+    // GET /api/access-requests?status=pending|handled|all
     [HttpGet]
-    public async Task<IActionResult> GetRequests()
+    public async Task<IActionResult> GetRequests([FromQuery] string status = "pending")
     {
         var guardianId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var requests = await _service.GetPendingRequestsAsync(guardianId);
+        var requests = await _service.GetRequestsAsync(guardianId, status);
         return Ok(requests);
     }
 

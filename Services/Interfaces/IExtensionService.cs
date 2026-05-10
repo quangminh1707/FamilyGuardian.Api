@@ -6,6 +6,7 @@ public interface IExtensionService
 {
     Task<ExtensionCheckResponse> CheckAccessAsync(string googleId, string domain);
     Task<ExtensionConfigResponse?> GetConfigAsync(string googleId);
+    Task<BlockInfoResult> GetBlockInfoAsync(string googleId, string domain);
     Task<HeartbeatResult> UpdateHeartbeatAsync(string googleId, string domain, int? allowedWebsiteId);
     Task<bool> ToggleFilterAsync(int childId, bool enabled, int requestingGuardianId);
     Task UpdateExtensionPingAsync(string googleId);

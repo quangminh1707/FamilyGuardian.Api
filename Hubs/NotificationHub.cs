@@ -20,6 +20,12 @@ public class NotificationHub : Hub
         _logger.LogInformation("Guardian {GuardianId} joined notification group", guardianId);
     }
 
+    public async Task JoinChildGroup(string childId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"child_{childId}");
+        _logger.LogInformation("Child {ChildId} joined notification group", childId);
+    }
+
     public override async Task OnConnectedAsync()
     {
         var userId = Context.UserIdentifier;
