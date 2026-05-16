@@ -152,7 +152,7 @@ public class AccessRequestService : IAccessRequestService
             query = query.Where(r => r.Status != "pending");
         }
 
-        return await query
+        var result = await query
             .OrderByDescending(r => r.RequestedAt)
             .Select(r => new AccessRequestDto
             {
@@ -175,6 +175,30 @@ public class AccessRequestService : IAccessRequestService
                 TempExpiresAt = r.TempExpiresAt
             })
             .ToListAsync();
+
+        var timeLimitRequests = result.Where(r => r.Reason == "time_limit_exceeded").ToList();
+        foreach (var dto in timeLimitRequests)
+        {
+            var website = await _context.AllowedWebsites
+                .FirstOrDefaultAsync(w => w.ChildId == dto.ChildId
+                                       && w.Domain == dto.Domain
+                                       && w.IsActive);
+            if (website == null) continue;
+
+            if (website.TimeLimitMinutes.HasValue)
+            {
+                dto.WebsiteRestrictionType = "minutes";
+                dto.WebsiteTimeLimitMinutes = website.TimeLimitMinutes;
+            }
+            else if (website.AllowedStartTime.HasValue)
+            {
+                dto.WebsiteRestrictionType = "time_window";
+                dto.WebsiteAllowedStartTime = website.AllowedStartTime.Value.ToString(@"HH\:mm");
+                dto.WebsiteAllowedEndTime = website.AllowedEndTime?.ToString(@"HH\:mm");
+            }
+        }
+
+        return result;
     }
 
     public async Task<(bool Success, string Message)> RespondToRequestAsync(
@@ -221,7 +245,7 @@ public class AccessRequestService : IAccessRequestService
             var bonusMinutes = dto.DurationMinutes ?? request.RequestedDurationMinutes ?? 30;
 
             var website = await _context.AllowedWebsites
-                .FirstOrDefaultAsync(w => w.ChildId == request.ChildId && w.Domain == request.Domain);
+                .FirstOrDefaultAsync(w => w.ChildId == request.ChildId && w.Domain == request.Domain && w.IsActive);
             if (website == null) return (false, "Không tìm thấy website trong danh sách");
 
             var today = DateOnly.FromDateTime(DateTime.Now);
@@ -229,22 +253,7 @@ public class AccessRequestService : IAccessRequestService
                 .FirstOrDefaultAsync(s => s.ChildId == request.ChildId
                                        && s.AllowedWebsiteId == website.Id
                                        && s.UsageDate == today);
-            if (stat == null)
-            {
-                stat = new DailyUsageStat
-                {
-                    ChildId = request.ChildId,
-                    AllowedWebsiteId = website.Id,
-                    Domain = website.Domain,
-                    UsageDate = today,
-                    TotalSeconds = 0,
-                    BonusSeconds = bonusMinutes * 60,
-                    RequestCount = 0,
-                    LastUpdated = DateTime.Now
-                };
-                _context.DailyUsageStats.Add(stat);
-            }
-            else
+            if (stat != null)
             {
                 stat.BonusSeconds += bonusMinutes * 60;
                 stat.Warning1Sent = false;
@@ -266,6 +275,53 @@ public class AccessRequestService : IAccessRequestService
                 });
 
             return (true, $"Đã gia hạn thêm {bonusMinutes} phút");
+        }
+
+        if (action == "extend_window")
+        {
+            request.Status = "approved_temp";
+
+            if (string.IsNullOrEmpty(dto.NewEndTime))
+                return (false, "Giờ kết thúc mới không được để trống");
+
+            var website = await _context.AllowedWebsites
+                .FirstOrDefaultAsync(w => w.ChildId == request.ChildId
+                                       && w.Domain == request.Domain
+                                       && w.IsActive);
+            if (website == null) return (false, "Không tìm thấy website trong danh sách");
+
+            if (TimeSpan.TryParse(dto.NewEndTime, out var newEnd))
+                website.AllowedEndTime = new TimeOnly(newEnd.Hours, newEnd.Minutes);
+
+            if (!string.IsNullOrEmpty(dto.NewStartTime) && TimeSpan.TryParse(dto.NewStartTime, out var newStart))
+                website.AllowedStartTime = new TimeOnly(newStart.Hours, newStart.Minutes);
+
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var stat = await _context.DailyUsageStats
+                .FirstOrDefaultAsync(s => s.ChildId == request.ChildId
+                                       && s.AllowedWebsiteId == website.Id
+                                       && s.UsageDate == today);
+            if (stat != null)
+            {
+                stat.TwWarning1Sent = false;
+                stat.TwWarning2Sent = false;
+            }
+
+            await _context.SaveChangesAsync();
+
+            await _hub.Clients
+                .Group($"child_{request.ChildId}")
+                .SendAsync("AccessApproved", new
+                {
+                    childId = request.ChildId,
+                    domain = request.Domain
+                });
+
+            request.RespondedAt = DateTime.Now;
+            request.Status = "approved_temp";
+            await _context.SaveChangesAsync();
+
+            return (true, "Đã cập nhật khung giờ cho phép");
         }
 
         if (action == "approve_temp" || action == "approve_permanent")

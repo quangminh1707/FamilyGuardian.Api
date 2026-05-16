@@ -17,11 +17,15 @@ public class AccessRequestDto
     public string Status { get; set; } = string.Empty;
     public DateTime RequestedAt { get; set; }
     public DateTime? TempExpiresAt { get; set; }
+    public string? WebsiteRestrictionType { get; set; }
+    public int? WebsiteTimeLimitMinutes { get; set; }
+    public string? WebsiteAllowedStartTime { get; set; }
+    public string? WebsiteAllowedEndTime { get; set; }
 }
 
 public class RespondAccessRequestDto
 {
-    // "approve_temp" | "approve_permanent" | "reject" | "extend_time" | "approve_internet"
+    // "approve_temp" | "approve_permanent" | "reject" | "extend_time" | "approve_internet" | "extend_window"
     [Required]
     public string Action { get; set; } = string.Empty;
 
@@ -29,6 +33,8 @@ public class RespondAccessRequestDto
     public int? DurationMinutes { get; set; }
     public string? StartTime { get; set; }
     public string? EndTime { get; set; }
+    public string? NewEndTime { get; set; }
+    public string? NewStartTime { get; set; }
 }
 
 public class RequestAccessDto

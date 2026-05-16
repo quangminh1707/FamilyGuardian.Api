@@ -130,6 +130,45 @@ public class ExtensionService : IExtensionService
             string reason = row.Reason ?? "";
             int? websiteId = row.AllowedWebsiteId;
 
+            var isTimeLimitBlock =
+                !string.IsNullOrWhiteSpace(reason)
+                && (
+                    reason.Contains("time_limit_exceeded", StringComparison.OrdinalIgnoreCase)
+                    || reason.Contains("hết", StringComparison.OrdinalIgnoreCase)
+                    || reason.Contains("limit", StringComparison.OrdinalIgnoreCase)
+                );
+
+            if (!allowed
+                && websiteId.HasValue
+                && isTimeLimitBlock)
+            {
+                var today = DateOnly.FromDateTime(DateTime.Now);
+                var stat = await _context.DailyUsageStats
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s =>
+                        s.ChildId == user!.Id
+                        && s.AllowedWebsiteId == websiteId.Value
+                        && s.UsageDate == today);
+
+                if (stat != null && stat.BonusSeconds > 0)
+                {
+                    var website = await _context.AllowedWebsites
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
+
+                    if (website?.TimeLimitMinutes != null)
+                    {
+                        var limitSeconds = website.TimeLimitMinutes.Value * 60;
+                        var effectiveUsed = Math.Max(0, stat.TotalSeconds - stat.BonusSeconds);
+                        if (effectiveUsed < limitSeconds)
+                        {
+                            allowed = true;
+                            reason = "";
+                        }
+                    }
+                }
+            }
+
             await LogAccessAsync(googleId, domain, allowed, websiteId);
 
             _logger.LogInformation(

@@ -42,6 +42,8 @@ public class AllowedWebsiteSpResult
     [Column("last_checked_at")]     public DateTime? LastCheckedAt { get; set; }
     [Column("created_at")]          public DateTime CreatedAt { get; set; }
     [Column("today_seconds")]       public int TodaySeconds { get; set; }
+    [Column("today_bonus_seconds")] public int TodayBonusSeconds { get; set; }
+    [Column("effective_seconds")]   public int EffectiveSeconds { get; set; }
     [Column("today_requests")]      public int TodayRequests { get; set; }
     [Column("limit_exceeded")]      public bool LimitExceeded { get; set; }
 }

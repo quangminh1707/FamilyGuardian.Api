@@ -45,6 +45,8 @@ public class AllowedWebsiteService : IAllowedWebsiteService
             HttpStatusCode = r.HttpStatusCode,
             LastCheckedAt = r.LastCheckedAt,
             TodaySeconds = r.TodaySeconds,
+            TodayBonusSeconds = r.TodayBonusSeconds,
+            EffectiveSeconds = r.EffectiveSeconds,
             TodayRequests = r.TodayRequests,
             LimitExceeded = r.LimitExceeded
         }).ToList();
