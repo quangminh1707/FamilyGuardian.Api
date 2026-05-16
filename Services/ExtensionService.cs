@@ -127,7 +127,7 @@ public class ExtensionService : IExtensionService
 
             var row = result.First();
             bool allowed = row.AccessResult == "allowed";
-            string reason = row.Reason ?? "";
+            string? reason = row.Reason;
             int? websiteId = row.AllowedWebsiteId;
 
             var isTimeLimitBlock =
@@ -163,7 +163,7 @@ public class ExtensionService : IExtensionService
                         if (effectiveUsed < limitSeconds)
                         {
                             allowed = true;
-                            reason = "";
+                            reason = null;
                         }
                     }
                 }
@@ -178,7 +178,7 @@ public class ExtensionService : IExtensionService
             return new ExtensionCheckResponse
             {
                 Allowed = allowed,
-                Reason = reason,
+                Reason = allowed ? null : reason,
                 Domain = domain,
                 AllowedWebsiteId = websiteId
             };
