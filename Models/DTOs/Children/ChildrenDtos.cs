@@ -45,6 +45,7 @@ public class AllowedWebsiteDto
     public int? HttpStatusCode { get; set; }
     public DateTime? LastCheckedAt { get; set; }
     public int TodaySeconds { get; set; }
+    public int BonusSeconds { get; set; }
     public int TodayBonusSeconds { get; set; }
     public int EffectiveSeconds { get; set; }
     public int TodayRequests { get; set; }

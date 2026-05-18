@@ -45,7 +45,8 @@ public class AllowedWebsiteService : IAllowedWebsiteService
             HttpStatusCode = r.HttpStatusCode,
             LastCheckedAt = r.LastCheckedAt,
             TodaySeconds = r.TodaySeconds,
-            TodayBonusSeconds = r.TodayBonusSeconds,
+            BonusSeconds = r.BonusSeconds,
+            TodayBonusSeconds = r.BonusSeconds,
             EffectiveSeconds = r.EffectiveSeconds,
             TodayRequests = r.TodayRequests,
             LimitExceeded = r.LimitExceeded
@@ -99,7 +100,13 @@ public class AllowedWebsiteService : IAllowedWebsiteService
             IsVerified = website.IsVerified,
             IsSafe = website.IsSafe ?? true,
             HttpStatusCode = website.HttpStatusCode,
-            LastCheckedAt = website.LastCheckedAt
+            LastCheckedAt = website.LastCheckedAt,
+            TodaySeconds = 0,
+            BonusSeconds = 0,
+            TodayBonusSeconds = 0,
+            EffectiveSeconds = 0,
+            TodayRequests = 0,
+            LimitExceeded = false
         };
     }
 

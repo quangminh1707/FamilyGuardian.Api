@@ -410,7 +410,25 @@ public class ExtensionService : IExtensionService
             if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
             {
                 var nowTime = TimeOnly.FromDateTime(DateTime.Now);
-                var endTime = website.AllowedEndTime.Value;
+                var allowedStartTime = website.AllowedStartTime.Value;
+                var allowedEndTime = website.AllowedEndTime.Value;
+                bool isInsideWindow;
+
+                if (allowedStartTime <= allowedEndTime)
+                {
+                    isInsideWindow = nowTime >= allowedStartTime && nowTime <= allowedEndTime;
+                }
+                else
+                {
+                    isInsideWindow = nowTime >= allowedStartTime || nowTime <= allowedEndTime;
+                }
+
+                if (!isInsideWindow)
+                {
+                    result.LimitExceeded = true;
+                }
+
+                var endTime = allowedEndTime;
 
                 // Tính phút còn lại đến cuối khung giờ
                 double minutesUntilEndRaw = (endTime.ToTimeSpan() - nowTime.ToTimeSpan()).TotalMinutes;
