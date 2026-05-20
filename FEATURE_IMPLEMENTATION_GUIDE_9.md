@@ -36,7 +36,7 @@ at ExtensionMonitorService.CheckExtensions() — line 47
 
 ---
 
-## 📦 SQL — Chạy theo thứ tự, note lại là đã xong
+## 📦 SQL - Đã làm xong
 
 ### SQL 1 — Thêm cột `temp_expires_at` vào `allowed_websites`
 

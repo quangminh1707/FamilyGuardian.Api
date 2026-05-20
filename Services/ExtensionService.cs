@@ -19,6 +19,11 @@ public class ExtensionCheckResponse
     public string? Reason { get; set; }
     public string? Domain { get; set; }
     public int? AllowedWebsiteId { get; set; }
+    public string? BlockMode { get; set; }
+    public int? LimitMinutes { get; set; }
+    public int? UsedSeconds { get; set; }
+    public string? TimeWindowStart { get; set; }
+    public string? TimeWindowEnd { get; set; }
 }
 
 public class ExtensionConfigResponse
@@ -129,6 +134,7 @@ public class ExtensionService : IExtensionService
             bool allowed = row.AccessResult == "allowed";
             string? reason = row.Reason;
             int? websiteId = row.AllowedWebsiteId;
+            string? blockMode = null;
 
             var isTimeLimitBlock =
                 !string.IsNullOrWhiteSpace(reason)
@@ -169,6 +175,58 @@ public class ExtensionService : IExtensionService
                 }
             }
 
+            if (!allowed && websiteId.HasValue)
+            {
+                var website = await _context.AllowedWebsites
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
+
+                if (website?.TimeLimitMinutes != null)
+                {
+                    blockMode = "time_limit";
+                }
+                else if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
+                {
+                    blockMode = "time_window";
+                }
+            }
+
+            int? limitMinutes = null;
+            int? usedSeconds = null;
+            string? timeWindowStart = null;
+            string? timeWindowEnd = null;
+
+            if (!allowed && websiteId.HasValue)
+            {
+                var website = await _context.AllowedWebsites
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
+
+                if (website?.TimeLimitMinutes != null)
+                {
+                    limitMinutes = website.TimeLimitMinutes;
+                    if (user != null)
+                    {
+                        var today = DateOnly.FromDateTime(DateTime.Now);
+                        var stat = await _context.DailyUsageStats
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(s =>
+                                s.ChildId == user.Id
+                                && s.AllowedWebsiteId == websiteId.Value
+                                && s.UsageDate == today);
+
+                        usedSeconds = stat != null
+                            ? Math.Max(0, stat.TotalSeconds - Math.Max(0, stat.BonusSeconds))
+                            : 0;
+                    }
+                }
+                else if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
+                {
+                    timeWindowStart = website.AllowedStartTime.Value.ToString(@"HH\:mm");
+                    timeWindowEnd = website.AllowedEndTime.Value.ToString(@"HH\:mm");
+                }
+            }
+
             await LogAccessAsync(googleId, domain, allowed, websiteId);
 
             _logger.LogInformation(
@@ -180,7 +238,12 @@ public class ExtensionService : IExtensionService
                 Allowed = allowed,
                 Reason = allowed ? null : reason,
                 Domain = domain,
-                AllowedWebsiteId = websiteId
+                AllowedWebsiteId = websiteId,
+                BlockMode = allowed ? null : blockMode,
+                LimitMinutes = allowed ? null : limitMinutes,
+                UsedSeconds = allowed ? null : usedSeconds,
+                TimeWindowStart = allowed ? null : timeWindowStart,
+                TimeWindowEnd = allowed ? null : timeWindowEnd
             };
         }
         catch (Exception ex)
@@ -282,7 +345,7 @@ public class ExtensionService : IExtensionService
             {
                 return new BlockInfoResult
                 {
-                    Reason = "time_limit_exceeded",
+                    Reason = "outside_time_window",
                     DomainExistsInWhitelist = true,
                     AllowedStartTime = website.AllowedStartTime.Value.ToString(@"HH\:mm"),
                     AllowedEndTime = website.AllowedEndTime.Value.ToString(@"HH\:mm")
