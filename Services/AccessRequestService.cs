@@ -32,6 +32,24 @@ public class AccessRequestService : IAccessRequestService
         domain = DomainNormalizer.Normalize(domain);
         reason = string.IsNullOrWhiteSpace(reason) ? "not_in_whitelist" : reason.Trim().ToLowerInvariant();
 
+        reason = reason switch
+        {
+            "time_limit_exceeded" => "time_limit_exceeded",
+            var r when r.Contains("time_limit")
+                    || r.Contains("timelimit")
+                    || r.Contains("exceeded") => "time_limit_exceeded",
+            "internet_paused" => "internet_paused",
+            var r when r.Contains("internet_paused")
+                    || r.Contains("internetpaused")
+                    || r.Contains("paused") => "internet_paused",
+            "outside_time_window" => "outside_time_window",
+            var r when r.Contains("outside_time")
+                    || r.Contains("time_window")
+                    || r.Contains("timewindow")
+                    || r.Contains("outside_window") => "outside_time_window",
+            _ => "not_in_whitelist"
+        };
+
         var child = await _context.Users
             .FirstOrDefaultAsync(u => u.GoogleId == googleId && u.Role == UserRole.Child);
         if (child == null) return (false, "Không tìm thấy tài khoản con");

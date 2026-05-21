@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<WebsiteWarningConfig> WebsiteWarningConfigs => Set<WebsiteWarningConfig>();
     public DbSet<WebsiteTimeWindowWarningConfig> WebsiteTimeWindowWarningConfigs => Set<WebsiteTimeWindowWarningConfig>();
     public DbSet<AccessRequest> AccessRequests => Set<AccessRequest>();
+    public DbSet<WebsiteScreenshot> WebsiteScreenshots => Set<WebsiteScreenshot>();
 
     // ── Stored procedure result types (keyless – không map tới bảng thật) ────
     public DbSet<ChildSpResult> ChildSpResults => Set<ChildSpResult>();

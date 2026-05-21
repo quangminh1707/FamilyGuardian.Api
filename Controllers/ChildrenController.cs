@@ -15,11 +15,13 @@ public class ChildrenController : ControllerBase
 {
     private readonly IChildService _childService;
     private readonly AppDbContext _context;
+    private readonly IScreenshotService _screenshotService;
 
-    public ChildrenController(IChildService childService, AppDbContext context)
+    public ChildrenController(IChildService childService, AppDbContext context, IScreenshotService screenshotService)
     {
         _childService = childService;
         _context = context;
+        _screenshotService = screenshotService;
     }
 
     [HttpGet]
@@ -101,5 +103,34 @@ public class ChildrenController : ControllerBase
         });
     }
 
-  
+    // ── Endpoint 1: Guardian yêu cầu chụp ──
+    [HttpPost("{childId}/request-screenshot")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> RequestScreenshot(int childId, [FromQuery] string domain)
+    {
+        if (string.IsNullOrWhiteSpace(domain))
+            return BadRequest("domain required");
+
+        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var result = await _screenshotService.RequestScreenshotAsync(guardianId, childId, domain);
+
+        if (!result.Success)
+            return BadRequest(new { error = result.Error });
+
+        return Ok(new { screenshotId = result.ScreenshotId, message = "Đã gửi yêu cầu chụp ảnh" });
+    }
+
+    // ── Endpoint 2: Lấy danh sách ảnh ──
+    [HttpGet("{childId}/screenshots")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> GetScreenshots(int childId, [FromQuery] string domain, [FromQuery] int limit = 10)
+    {
+        if (string.IsNullOrWhiteSpace(domain))
+            return BadRequest("domain required");
+
+        var guardianId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var screenshots = await _screenshotService.GetScreenshotsAsync(guardianId, childId, domain, limit);
+        return Ok(screenshots);
+    }
 }

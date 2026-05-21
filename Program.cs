@@ -124,6 +124,7 @@ try
     // ─── Extension Services ───────────────────────────────────────────
     builder.Services.AddScoped<IExtensionService, ExtensionService>();
     builder.Services.AddScoped<IAccessRequestService, AccessRequestService>();
+    builder.Services.AddScoped<IScreenshotService, ScreenshotService>();
 
     // ─── Extension Monitor Background Service ────────────────────
 builder.Services.AddHostedService<ExtensionMonitorService>();
@@ -201,6 +202,7 @@ builder.Services.AddHostedService<ExtensionMonitorService>();
     });
 
     app.UseCors("AllowFrontend");
+    app.UseStaticFiles();
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseMiddleware<RequestLoggingMiddleware>();
     app.UseAuthentication();

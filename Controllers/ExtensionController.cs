@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using FamilyGuardian.Api.Services.Interfaces;
 using FamilyGuardian.Api.Models.DTOs;
 using System.Security.Claims;
+using FamilyGuardian.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FamilyGuardian.Api.Controllers;
 
@@ -19,17 +21,23 @@ public class ExtensionController : ControllerBase
     private readonly IExtensionService _extensionService;
     private readonly IGoogleTokenService _googleTokenService;
     private readonly IAccessRequestService _accessRequestService;
+    private readonly IScreenshotService _screenshotService;
     private readonly ILogger<ExtensionController> _logger;
+    private readonly AppDbContext _context;
 
     public ExtensionController(
         IExtensionService extensionService,
         IGoogleTokenService googleTokenService,
         IAccessRequestService accessRequestService,
+        IScreenshotService screenshotService,
+        AppDbContext context,
         ILogger<ExtensionController> logger)
     {
         _extensionService = extensionService;
         _googleTokenService = googleTokenService;
         _accessRequestService = accessRequestService;
+        _screenshotService = screenshotService;
+        _context = context;
         _logger = logger;
     }
 
@@ -258,6 +266,43 @@ public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest 
     }
 
     /// <summary>
+    /// GET /api/extension/pending-screenshots
+    /// Extension polls every 5s to receive pending screenshot commands.
+    /// </summary>
+    [HttpGet("pending-screenshots")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPendingScreenshots()
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized(new { error = "Missing or invalid authorization header" });
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success)
+            return Unauthorized(new { error = "Invalid Google token" });
+
+        var child = await _context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
+        if (child == null)
+            return Unauthorized(new { error = "Child account not found" });
+
+        var pending = await _context.WebsiteScreenshots
+            .AsNoTracking()
+            .Where(s => s.ChildId == child.Id
+                     && s.Status == "pending"
+                     && s.CapturedAt >= DateTime.Now.AddMinutes(-2))
+            .OrderBy(s => s.CapturedAt)
+            .Select(s => new
+            {
+                screenshotId = s.Id,
+                domain = s.Domain
+            })
+            .ToListAsync();
+
+        return Ok(pending);
+    }
+
+    /// <summary>
     /// GET /api/extension/block-info?domain=youtube.com
     /// Extension calls this to understand why a page is blocked.
     /// </summary>
@@ -283,6 +328,66 @@ public async Task<ActionResult> MarkWarningShown([FromBody] WarningShownRequest 
         var result = await _extensionService.GetBlockInfoAsync(googleId, domain);
         return Ok(result);
     }
+
+    // ── Endpoint 3: Extension upload ảnh ──
+    [HttpPost("upload-screenshot")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UploadScreenshot(
+        [FromQuery] int screenshotId,
+        IFormFile image)
+    {
+        if (image == null || image.Length == 0)
+            return BadRequest("No image");
+
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized();
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success) return Unauthorized();
+
+        var child = await _context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
+        if (child == null) return Unauthorized();
+
+        var screenshot = await _context.WebsiteScreenshots.FindAsync(screenshotId);
+        if (screenshot == null || screenshot.ChildId != child.Id)
+            return Forbid();
+
+        var saved = await _screenshotService.SaveScreenshotAsync(screenshotId, image);
+        return saved ? Ok("saved") : StatusCode(500, "save failed");
+    }
+
+    // ── Endpoint 4: Extension báo tab_not_found hoặc failed ──
+    [HttpPost("screenshot-result")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ScreenshotResult([FromBody] ScreenshotResultDto dto)
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized();
+        var token = authHeader.Substring("Bearer ".Length);
+        var (success, googleId, _, _) = await _googleTokenService.VerifyTokenAsync(token);
+        if (!success) return Unauthorized();
+
+        var child = await _context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
+        if (child == null) return Unauthorized();
+
+        var screenshot = await _context.WebsiteScreenshots.FindAsync(dto.ScreenshotId);
+        if (screenshot == null || screenshot.ChildId != child.Id)
+            return Forbid();
+
+        await _screenshotService.UpdateScreenshotStatusAsync(
+            dto.ScreenshotId, dto.Status, dto.ErrorMessage);
+
+        return Ok();
+    }
+}
+
+public class ScreenshotResultDto
+{
+    public int ScreenshotId { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public string? ErrorMessage { get; set; }
 }
 
 public class HeartbeatRequest
