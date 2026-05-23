@@ -110,7 +110,7 @@ public class ExtensionService : IExtensionService
                 return new ExtensionCheckResponse
                 {
                     Allowed = false,
-                    Reason = "Internet đang bị tạm dừng bởi phụ huynh",
+                    Reason = "internet_paused",
                     Domain = domain
                 };
             }
@@ -125,7 +125,7 @@ public class ExtensionService : IExtensionService
                 return new ExtensionCheckResponse
                 {
                     Allowed = false,
-                    Reason = "Không thể xác định trạng thái - chặn để an toàn",
+                    Reason = "not_in_whitelist",
                     Domain = domain
                 };
             }
@@ -175,55 +175,55 @@ public class ExtensionService : IExtensionService
                 }
             }
 
-            if (!allowed && websiteId.HasValue)
-            {
-                var website = await _context.AllowedWebsites
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
-
-                if (website?.TimeLimitMinutes != null)
-                {
-                    blockMode = "time_limit";
-                }
-                else if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
-                {
-                    blockMode = "time_window";
-                }
-            }
-
             int? limitMinutes = null;
             int? usedSeconds = null;
             string? timeWindowStart = null;
             string? timeWindowEnd = null;
 
-            if (!allowed && websiteId.HasValue)
+            if (!allowed)
             {
-                var website = await _context.AllowedWebsites
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
-
-                if (website?.TimeLimitMinutes != null)
+                if (websiteId.HasValue)
                 {
-                    limitMinutes = website.TimeLimitMinutes;
-                    if (user != null)
-                    {
-                        var today = DateOnly.FromDateTime(DateTime.Now);
-                        var stat = await _context.DailyUsageStats
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(s =>
-                                s.ChildId == user.Id
-                                && s.AllowedWebsiteId == websiteId.Value
-                                && s.UsageDate == today);
+                    var website = await _context.AllowedWebsites
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(w => w.Id == websiteId.Value);
 
-                        usedSeconds = stat != null
-                            ? Math.Max(0, stat.TotalSeconds - Math.Max(0, stat.BonusSeconds))
-                            : 0;
+                    if (website?.TimeLimitMinutes != null)
+                    {
+                        blockMode = "time_limit";
+                        reason = "time_limit_exceeded";
+                        limitMinutes = website.TimeLimitMinutes;
+                        
+                        if (user != null)
+                        {
+                            var today = DateOnly.FromDateTime(DateTime.Now);
+                            var stat = await _context.DailyUsageStats
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync(s =>
+                                    s.ChildId == user.Id
+                                    && s.AllowedWebsiteId == websiteId.Value
+                                    && s.UsageDate == today);
+
+                            usedSeconds = stat != null
+                                ? Math.Max(0, stat.TotalSeconds - Math.Max(0, stat.BonusSeconds))
+                                : 0;
+                        }
+                    }
+                    else if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
+                    {
+                        blockMode = "time_window";
+                        reason = "outside_time_window";
+                        timeWindowStart = website.AllowedStartTime.Value.ToString(@"HH\:mm");
+                        timeWindowEnd = website.AllowedEndTime.Value.ToString(@"HH\:mm");
+                    }
+                    else
+                    {
+                        reason = "not_in_whitelist";
                     }
                 }
-                else if (website?.AllowedStartTime != null && website.AllowedEndTime != null)
+                else
                 {
-                    timeWindowStart = website.AllowedStartTime.Value.ToString(@"HH\:mm");
-                    timeWindowEnd = website.AllowedEndTime.Value.ToString(@"HH\:mm");
+                    reason = "not_in_whitelist";
                 }
             }
 
