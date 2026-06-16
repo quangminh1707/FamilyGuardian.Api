@@ -133,4 +133,61 @@ public class ChildrenController : ControllerBase
         var screenshots = await _screenshotService.GetScreenshotsAsync(guardianId, childId, domain, limit);
         return Ok(screenshots);
     }
+
+    [HttpDelete("{childId}/screenshots/{screenshotId}")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> DeleteScreenshot(int childId, int screenshotId)
+    {
+        var guardianId = GetCurrentUserId();
+        var ok = await _screenshotService.DeleteScreenshotAsync(guardianId, childId, screenshotId);
+        return ok ? Ok() : NotFound();
+    }
+
+    [HttpPost("{childId}/schedule-screenshot")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> ScheduleScreenshot(int childId, [FromBody] ScheduleScreenshotDto dto)
+    {
+        if (dto.ScheduledAt <= DateTime.UtcNow)
+            return BadRequest("Thời gian hẹn phải trong tương lai");
+
+        var guardianId = GetCurrentUserId();
+        var id = await _screenshotService.ScheduleScreenshotAsync(
+            guardianId, childId, dto.Domain, dto.ScheduledAt);
+
+        return id > 0
+            ? Ok(new { scheduleId = id, message = "Đã hẹn giờ chụp ảnh" })
+            : BadRequest("Không có quyền");
+    }
+
+    [HttpGet("{childId}/scheduled-screenshots")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> GetScheduled(int childId, [FromQuery] string domain)
+    {
+        if (string.IsNullOrWhiteSpace(domain))
+            return BadRequest("domain required");
+
+        var guardianId = GetCurrentUserId();
+        var list = await _screenshotService.GetScheduledAsync(guardianId, childId, domain);
+        return Ok(list);
+    }
+
+    [HttpDelete("{childId}/scheduled-screenshots/{scheduleId}")]
+    [Authorize(Roles = "Guardian,Admin")]
+    public async Task<IActionResult> CancelScheduled(int childId, int scheduleId)
+    {
+        var guardianId = GetCurrentUserId();
+        var ok = await _screenshotService.CancelScheduledAsync(guardianId, scheduleId);
+        return ok ? Ok() : NotFound();
+    }
+
+    private int GetCurrentUserId()
+    {
+        return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+}
+
+public class ScheduleScreenshotDto
+{
+    public string Domain { get; set; } = string.Empty;
+    public DateTime ScheduledAt { get; set; }
 }

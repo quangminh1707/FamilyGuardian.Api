@@ -1,5 +1,6 @@
 using FamilyGuardian.Api.Data;
 using FamilyGuardian.Api.Hubs;
+using FamilyGuardian.Api.Models.DTOs.Notifications;
 using FamilyGuardian.Api.Models.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +27,23 @@ public class ExtensionMonitorService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            try { await CheckExtensions(); }
-            catch (Exception ex) { _logger.LogError(ex, "Error in ExtensionMonitorService"); }
+            try
+            {
+                await CheckExtensions();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in ExtensionMonitorService");
+            }
 
-            try { await CleanupExpiredTempAccess(); }
-            catch (Exception ex) { _logger.LogError(ex, "Error cleaning up temp access"); }
+            try
+            {
+                await CleanupExpiredTempAccess();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cleaning up temp access");
+            }
 
             await Task.Delay(10_000, stoppingToken); // Kiểm tra mỗi 10 giây
         }
@@ -42,7 +55,7 @@ public class ExtensionMonitorService : BackgroundService
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         // Con nào extension đang active nhưng ping đã ngừng > 20 giây
-        var threshold = DateTime.UtcNow.AddSeconds(-20);
+        var threshold = DateTime.Now.AddSeconds(-20);
 
         var offlineChildren = await db.UserOnlineStatuses
             .Where(o => o.ExtensionActive == true && o.ExtensionLastSeen < threshold)
@@ -51,6 +64,11 @@ public class ExtensionMonitorService : BackgroundService
 
         foreach (var status in offlineChildren)
         {
+            var wasPreviouslyActive =
+                status.ExtensionActive
+                && status.ExtensionLastSeen.HasValue
+                && status.ExtensionLastSeen.Value > DateTime.Now.AddMinutes(-2);
+
             // Đánh dấu extension đã tắt
             status.ExtensionActive = false;
             await db.SaveChangesAsync();
@@ -66,40 +84,97 @@ public class ExtensionMonitorService : BackgroundService
 
             foreach (var guardianId in guardianIds)
             {
-                // ✅ Lưu vào bảng notifications
-                var notification = new Notification
+                if (wasPreviouslyActive)
                 {
-                    GuardianId = guardianId,
-                    ChildId = status.UserId,
-                    Title = "⚠️ Extension bị tắt",
-                    Message = $"{status.User?.FullName ?? "Con"} vừa tắt extension bộ lọc web",
-                    Type = NotificationType.Warning,
-                    IsRead = false,
-                    CreatedAt = DateTime.UtcNow,
-                    SentAt = DateTime.UtcNow
-                };
-                db.Notifications.Add(notification);
-                await db.SaveChangesAsync();
+                    await CreateTamperAlertAsync(db, status.UserId, guardianId, status.User?.FullName ?? "Con");
+                    continue;
+                }
 
-                _logger.LogInformation(
-                    "Notification saved: Guardian={GuardianId}, Child={ChildId}, NotificationId={NotifId}",
-                    guardianId, status.UserId, notification.Id);
-
-                // ✅ Push SignalR tới guardian
-                await _hubContext.Clients
-                    .Group($"guardian_{guardianId}")
-                    .SendAsync("ExtensionOffline", new
-                    {
-                        childId = status.UserId,
-                        childName = status.User?.FullName ?? "Con",
-                        detectedAt = DateTime.UtcNow,
-                        notificationId = notification.Id
-                    });
+                await CreateExtensionOfflineNotificationAsync(db, status.UserId, guardianId, status.User?.FullName ?? "Con");
             }
         }
     }
 
-    // ── Feature 2: Cleanup temp access đã hết hạn ──────────────────────────
+    private async Task CreateExtensionOfflineNotificationAsync(AppDbContext db, int childId, int guardianId, string childName)
+    {
+        var notification = new Notification
+        {
+            GuardianId = guardianId,
+            ChildId = childId,
+            Title = "⚠️ Extension bị tắt",
+            Message = $"{childName} vừa tắt extension bộ lọc web",
+            Type = NotificationType.Warning,
+            AlertType = "extension_offline",
+            IsRead = false,
+            CreatedAt = DateTime.Now,
+            SentAt = DateTime.Now
+        };
+
+        db.Notifications.Add(notification);
+        await db.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Notification saved: Guardian={GuardianId}, Child={ChildId}, NotificationId={NotifId}",
+            guardianId, childId, notification.Id);
+
+        await _hubContext.Clients
+            .Group($"guardian_{guardianId}")
+            .SendAsync("ExtensionOffline", new
+            {
+                childId,
+                childName,
+                detectedAt = DateTime.Now,
+                notificationId = notification.Id,
+                notificationType = notification.AlertType
+            });
+    }
+
+    private async Task CreateTamperAlertAsync(AppDbContext db, int childId, int guardianId, string childName)
+    {
+        var notification = new Notification
+        {
+            GuardianId = guardianId,
+            ChildId = childId,
+            Title = "⚠️ Cảnh báo: Tiện ích bị tắt",
+            Message = $"Tiện ích Family Guardian trên máy của {childName} vừa bị ngắt kết nối đột ngột. Có thể tiện ích đã bị tắt hoặc gỡ bỏ.",
+            Type = NotificationType.Warning,
+            AlertType = "tamper_alert",
+            IsRead = false,
+            CreatedAt = DateTime.Now,
+            SentAt = DateTime.Now
+        };
+
+        db.Notifications.Add(notification);
+        await db.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Tamper notification saved: Guardian={GuardianId}, Child={ChildId}, NotificationId={NotifId}",
+            guardianId, childId, notification.Id);
+
+        await _hubContext.Clients
+            .Group($"guardian_{guardianId}")
+            .SendAsync("ReceiveNotification", new NotificationDto
+            {
+                Id = notification.Id,
+                Title = notification.Title,
+                Message = notification.Message,
+                Type = notification.Type.ToString().ToLower(),
+                NotificationType = notification.AlertType,
+                IsRead = false,
+                CreatedAt = notification.CreatedAt
+            });
+
+        await _hubContext.Clients
+            .Group($"guardian_{guardianId}")
+            .SendAsync("TamperAlert", new
+            {
+                ChildId = childId,
+                ChildName = childName,
+                DetectedAt = DateTime.Now
+            });
+    }
+
+    // ── Feature 2: Cleanup temp access đã hết hạn ─────────────────────────────────
     private async Task CleanupExpiredTempAccess()
     {
         using var scope = _serviceProvider.CreateScope();

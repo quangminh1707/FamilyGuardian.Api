@@ -92,6 +92,7 @@ try
         c.Timeout = TimeSpan.FromSeconds(10);
         c.DefaultRequestHeaders.Add("User-Agent", "FamilyGuardian/1.0");
     });
+    builder.Services.AddHttpClient();
 
     // ─── SignalR ─────────────────────────────────────────────────────
     builder.Services.AddSignalR();
@@ -108,6 +109,20 @@ try
             .WithSimpleSchedule(s => s
                 .WithIntervalInMinutes(1)
                 .RepeatForever()));
+
+        var screenshotJobKey = new JobKey("ExecuteScheduledScreenshotsJob");
+        q.AddJob<ExecuteScheduledScreenshotsJob>(opts => opts.WithIdentity(screenshotJobKey));
+        q.AddTrigger(opts => opts
+            .ForJob(screenshotJobKey)
+            .WithIdentity("ExecuteScheduledScreenshots-trigger")
+            .WithCronSchedule("0 * * * * ?"));
+
+        var storageCleanupJobKey = new JobKey("StorageCleanupJob");
+        q.AddJob<StorageCleanupJob>(opts => opts.WithIdentity(storageCleanupJobKey));
+        q.AddTrigger(opts => opts
+            .ForJob(storageCleanupJobKey)
+            .WithIdentity("StorageCleanupTrigger")
+            .WithCronSchedule("0 0 2 * * ?"));
     });
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 

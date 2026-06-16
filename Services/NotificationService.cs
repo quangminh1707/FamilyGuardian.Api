@@ -46,6 +46,7 @@ public class NotificationService : INotificationService
                 Title = n.Title,
                 Message = n.Message,
                 Type = n.Type.ToString().ToLower(),
+                NotificationType = n.AlertType,
                 IsRead = n.IsRead,
                 ScheduledAt = n.ScheduledAt,
                 SentAt = n.SentAt,
@@ -66,6 +67,7 @@ public class NotificationService : INotificationService
                 Title = n.Title,
                 Message = n.Message,
                 Type = n.Type.ToString().ToLower(),
+                NotificationType = n.AlertType,
                 IsRead = n.IsRead,
                 ScheduledAt = n.ScheduledAt,
                 SentAt = n.SentAt,
@@ -106,6 +108,7 @@ public class NotificationService : INotificationService
                 Title = notification.Title,
                 Message = notification.Message,
                 Type = notification.Type.ToString().ToLower(),
+                NotificationType = notification.AlertType,
                 CreatedAt = notification.CreatedAt
             });
         }
@@ -155,6 +158,7 @@ public class NotificationService : INotificationService
                 Title = n.Title,
                 Message = n.Message,
                 Type = n.Type.ToString().ToLower(),
+                NotificationType = n.AlertType,
                 CreatedAt = n.CreatedAt
             });
         }

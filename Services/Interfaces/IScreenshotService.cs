@@ -4,6 +4,11 @@ public interface IScreenshotService
 {
     Task<ScreenshotRequestResult> RequestScreenshotAsync(int guardianId, int childId, string domain);
     Task<bool> SaveScreenshotAsync(int screenshotId, IFormFile imageFile);
+    Task<bool> DeleteScreenshotAsync(int guardianId, int childId, int screenshotId);
+    Task<int> ScheduleScreenshotAsync(int guardianId, int childId, string domain, DateTime scheduledAt);
+    Task<List<ScheduledScreenshotDto>> GetScheduledAsync(int guardianId, int childId, string domain);
+    Task<bool> CancelScheduledAsync(int guardianId, int scheduleId);
+    Task ExecutePendingScheduledAsync();
     Task UpdateScreenshotStatusAsync(int screenshotId, string status, string? errorMessage = null);
     Task<List<ScreenshotDto>> GetScreenshotsAsync(int guardianId, int childId, string domain, int limit = 10);
 }
@@ -23,4 +28,13 @@ public class ScreenshotDto
     public string? ImageUrl { get; set; }
     public DateTime CapturedAt { get; set; }
     public string? ErrorMessage { get; set; }
+}
+
+public class ScheduledScreenshotDto
+{
+    public int Id { get; set; }
+    public string Domain { get; set; } = string.Empty;
+    public DateTime ScheduledAt { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public int? ScreenshotId { get; set; }
 }

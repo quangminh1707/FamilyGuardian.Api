@@ -6,6 +6,7 @@ public class NotificationDto
     public string Title { get; set; } = null!;
     public string Message { get; set; } = null!;
     public string Type { get; set; } = null!; // "reminder", "warning", "info"
+    public string? NotificationType { get; set; }
     public bool IsRead { get; set; }
     public DateTime? ScheduledAt { get; set; }
     public DateTime? SentAt { get; set; }

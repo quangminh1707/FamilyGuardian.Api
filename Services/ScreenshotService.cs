@@ -72,6 +72,25 @@ public class ScreenshotService : IScreenshotService
         return new ScreenshotRequestResult { Success = true, ScreenshotId = screenshot.Id };
     }
 
+    public async Task<bool> DeleteScreenshotAsync(int guardianId, int childId, int screenshotId)
+    {
+        var shot = await _context.WebsiteScreenshots.FindAsync(screenshotId);
+        if (shot == null || shot.ChildId != childId || shot.RequestedBy != guardianId)
+            return false;
+
+        if (!string.IsNullOrEmpty(shot.ImagePath))
+        {
+            var baseDir = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+            var fullPath = Path.Combine(baseDir, shot.ImagePath.TrimStart('/'));
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+        }
+
+        _context.WebsiteScreenshots.Remove(shot);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> SaveScreenshotAsync(int screenshotId, IFormFile imageFile)
     {
         var screenshot = await _context.WebsiteScreenshots.FindAsync(screenshotId);
@@ -129,6 +148,103 @@ public class ScreenshotService : IScreenshotService
 
             return false;
         }
+    }
+
+    public async Task<int> ScheduleScreenshotAsync(
+        int guardianId, int childId, string domain, DateTime scheduledAt)
+    {
+        var hasRelation = await _context.GuardianChildRelationships
+            .AsNoTracking()
+            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
+        if (!hasRelation) return -1;
+
+        var website = await _context.AllowedWebsites
+            .AsNoTracking()
+            .FirstOrDefaultAsync(w => w.ChildId == childId && w.Domain == domain && w.IsActive);
+
+        var schedule = new ScheduledScreenshot
+        {
+            ChildId = childId,
+            AllowedWebsiteId = website?.Id,
+            Domain = domain,
+            ScheduledAt = scheduledAt,
+            RequestedBy = guardianId,
+            Status = "pending",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.ScheduledScreenshots.Add(schedule);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Screenshot scheduled: Id={Id}, ChildId={ChildId}, Domain={Domain}, At={At}",
+            schedule.Id, childId, domain, scheduledAt);
+
+        return schedule.Id;
+    }
+
+    public async Task<List<ScheduledScreenshotDto>> GetScheduledAsync(
+        int guardianId, int childId, string domain)
+    {
+        var hasRelation = await _context.GuardianChildRelationships
+            .AsNoTracking()
+            .AnyAsync(r => r.GuardianId == guardianId && r.ChildId == childId);
+        if (!hasRelation) return [];
+
+        return await _context.ScheduledScreenshots
+            .AsNoTracking()
+            .Where(s => s.ChildId == childId
+                     && s.Domain == domain
+                     && s.Status == "pending"
+                     && s.ScheduledAt >= DateTime.UtcNow)
+            .OrderBy(s => s.ScheduledAt)
+            .Select(s => new ScheduledScreenshotDto
+            {
+                Id = s.Id,
+                Domain = s.Domain,
+                ScheduledAt = s.ScheduledAt,
+                Status = s.Status,
+                ScreenshotId = s.ScreenshotId
+            })
+            .ToListAsync();
+    }
+
+    public async Task<bool> CancelScheduledAsync(int guardianId, int scheduleId)
+    {
+        var schedule = await _context.ScheduledScreenshots.FindAsync(scheduleId);
+        if (schedule == null || schedule.RequestedBy != guardianId) return false;
+
+        schedule.Status = "cancelled";
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task ExecutePendingScheduledAsync()
+    {
+        var now = DateTime.UtcNow;
+        var pending = await _context.ScheduledScreenshots
+            .Where(s => s.Status == "pending" && s.ScheduledAt <= now)
+            .ToListAsync();
+
+        foreach (var schedule in pending)
+        {
+            try
+            {
+                var result = await RequestScreenshotAsync(
+                    schedule.RequestedBy, schedule.ChildId, schedule.Domain);
+
+                schedule.Status = "executed";
+                schedule.ScreenshotId = result.ScreenshotId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to execute scheduled screenshot {Id}", schedule.Id);
+                schedule.Status = "cancelled";
+            }
+        }
+
+        if (pending.Count > 0)
+            await _context.SaveChangesAsync();
     }
 
     public async Task UpdateScreenshotStatusAsync(

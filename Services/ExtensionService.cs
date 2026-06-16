@@ -32,6 +32,7 @@ public class ExtensionConfigResponse
     public int ChildId { get; set; }
     public string? FullName { get; set; }
     public string? Email { get; set; }
+    public List<string> AllowedDomains { get; set; } = new();
 }
 
 public class BlockInfoResult
@@ -277,7 +278,12 @@ public class ExtensionService : IExtensionService
                 FilterEnabled = user.FilterEnabled,
                 ChildId = user.Id,
                 FullName = user.FullName,
-                Email = user.Email
+                Email = user.Email,
+                AllowedDomains = await _context.AllowedWebsites
+                    .AsNoTracking()
+                    .Where(w => w.ChildId == user.Id && w.IsActive)
+                    .Select(w => w.Domain)
+                    .ToListAsync()
             };
         }
         catch (Exception ex)
